@@ -10,6 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import mongoose from "mongoose";
 const connect = () => __awaiter(void 0, void 0, void 0, function* () {
     mongoose.set('strictQuery', false);
-    yield mongoose.connect(``);
+    yield mongoose.connect(`ahmad`);
 });
 export { connect };
