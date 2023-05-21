@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { RequestHandler } from "express";
-import authConfig from "../db/config/auth.config.js";
-import { User } from "../db/models/user.js";
+import authConfig from "../../db/config/auth.config.js";
+import { User } from "../../db/models/user.js";
 
 const validateToken2: RequestHandler = async (req: any, res, next) => {
     try {
@@ -14,7 +14,7 @@ const validateToken2: RequestHandler = async (req: any, res, next) => {
             if (err) {
                 return res.status(403).json({ message: "Invalid Token" });
             }
-            const user: any = await User.findOne({ email: payload.email });
+            const user: any = await User.findOne({ email: req.email });
             if (!user) {
                 return res.status(401).json({ message: "No Such User" });
             }

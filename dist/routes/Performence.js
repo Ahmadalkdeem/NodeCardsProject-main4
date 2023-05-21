@@ -11,9 +11,9 @@ import { Router } from "express";
 const router = Router();
 import { Cart } from "../db/models/cart.js";
 import { date } from '../db/models/date.js';
-import { validateToken2 } from "../middleware/validtetoken2.js";
+import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validatedate } from "../middleware/date.js";
-import { validatenumber2 } from "../middleware/number2.js";
+import { validatenumber2 } from "../middleware/number/number2.js";
 router.get('/detales/:accessToken/:limet/:sort', validateToken2, validatenumber2, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let sort = Number(req.params.sort);

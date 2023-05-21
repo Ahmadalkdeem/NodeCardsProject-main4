@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import authConfig from "../db/config/auth.config.js";
+import authConfig from "../../db/config/auth.config.js";
 const validateToken = (req, res, next) => {
     const token = req.body.token;
     if (!token) {

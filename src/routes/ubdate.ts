@@ -3,7 +3,7 @@ const router = Router();
 import _ from "underscore";
 import { pantsproduct, Shirtsproduct, shoesproduct } from "../db/models/product.js";
 import { upload } from "../middleware/uplodefile.js";
-import { validateToken2 } from "../middleware/validtetoken2.js";
+import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateCard } from "../middleware/cardupdate.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
 

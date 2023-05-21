@@ -11,11 +11,11 @@ import { Router } from "express";
 const router = Router();
 import { Cart } from "../db/models/cart.js";
 import { date } from '../db/models/date.js';
-import { validateToken2 } from "../middleware/validtetoken2.js";
+import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateorder } from "../middleware/order.js";
 import { neworder } from "../middleware/neworder.js";
 import nodemailer from 'nodemailer';
-import { validatenumber } from "../middleware/number.js";
+import { validatenumber } from "../middleware/number/number.js";
 import authConfig from "../db/config/auth.config.js";
 router.post('/neworder', validateorder, neworder, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

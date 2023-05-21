@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { RequestHandler } from "express";
-import authConfig from "../db/config/auth.config.js";
+import authConfig from "../../db/config/auth.config.js";
 
 
 const validateToken: RequestHandler = (req: any, res, next) => {

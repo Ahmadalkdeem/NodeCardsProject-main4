@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { numbersSchema2 } from "../validators/number.js";
+import { numbersSchema2 } from "../../validators/number.js";
 const validatenumber2 = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { error } = numbersSchema2.validate({ sort: Number(req.params.sort), limet: Number(req.params.limet) });

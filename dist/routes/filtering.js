@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
 import { pantsproduct, Shirtsproduct, shoesproduct } from "../db/models/product.js";
-import { validatenumber } from "../middleware/number.js";
+import { validatenumber } from "../middleware/number/number.js";
 import { Finddate } from "../middleware/find/find.js";
 import { validatefind } from "../middleware/find/validatefind.js";
 router.get("/shoesproduct/:skip", validatenumber, validatefind, Finddate, (req, res) => {

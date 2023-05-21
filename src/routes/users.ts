@@ -5,14 +5,14 @@ import authConfig from '../db/config/auth.config.js';
 import { User } from "../db/models/user.js";
 import { validateSignUp } from "../middleware/verifySignupBody.js";
 import { userAlreadyExists } from "../middleware/userAlreadyExists.js";
-import { validateToken } from "../middleware/validtetoken.js";
+import { validateToken } from "../middleware/validtetoken/validtetoken.js";
 import bcrypt from "bcryptjs";
 import { validateSignIn } from "../middleware/verifySignInBody.js";
-import { validateToken2 } from "../middleware/validtetoken2.js";
+import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateMail } from "../middleware/validateMail.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
 import { ForgotPassword } from "../middleware/ForgotPassword.js";
-import { validatenumber } from "../middleware/number.js";
+import { validatenumber } from "../middleware/number/number.js";
 import { numbersSchema } from "../validators/number.js";
 import { Restartpassword } from "../db/models/Restartpassword.js";
 

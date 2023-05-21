@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { numbersSchema2 } from "../validators/number.js";
+import { numbersSchema2 } from "../../validators/number.js";
 const validatenumber2: RequestHandler = async (req: any, res, next) => {
     try {
         const { error } = numbersSchema2.validate({ sort: Number(req.params.sort), limet: Number(req.params.limet) });
