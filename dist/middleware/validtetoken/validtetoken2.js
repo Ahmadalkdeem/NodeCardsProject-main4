@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import jwt from "jsonwebtoken";
 import authConfig from "../../db/config/auth.config.js";
 import { User } from "../../db/models/user.js";
+import bcrypt from "bcryptjs";
 const validateToken2 = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.params.accessToken;
@@ -20,9 +21,13 @@ const validateToken2 = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             if (err) {
                 return res.status(403).json({ message: "Invalid Token" });
             }
-            const user = yield User.findOne({ email: req.email });
+            const user = yield User.findOne({ email: payload.email });
             if (!user) {
                 return res.status(401).json({ message: "No Such User" });
+            }
+            const isPasswordValid = yield bcrypt.compare(payload.password, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({ message: "Invalid Credentials" });
             }
             if (user.roles[0] === 'admin') {
                 next();

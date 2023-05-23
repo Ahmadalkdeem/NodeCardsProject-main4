@@ -8,8 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import mongoose from "mongoose";
+import authConfig from "./config/auth.config.js";
 const connect = () => __awaiter(void 0, void 0, void 0, function* () {
     mongoose.set('strictQuery', false);
-    yield mongoose.connect(``);
+    yield mongoose.connect(authConfig.connect);
 });
 export { connect };

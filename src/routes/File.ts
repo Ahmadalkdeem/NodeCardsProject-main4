@@ -105,54 +105,6 @@ router.delete("/delete/shoes/:id/:accessToken", validateToken2, validateObjectid
         res.status(500).json({ message: `Error: ${e}` })
     }
 });
-router.get("/shoesproduct/:skip", validatenumber, (req, res) => {
-    let numberskip = Number(req.params.skip)
 
-    shoesproduct.find().limit(40).skip(numberskip)
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
-});
-router.get("/Shirtsproduct/:skip", validatenumber, (req, res) => {
-    let numberskip = Number(req.params.skip)
-    Shirtsproduct.find().limit(40).skip(numberskip)
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
-});
-router.get("/pantsproduct/:skip", validatenumber, (req, res) => {
-    let numberskip = Number(req.params.skip)
-    pantsproduct.find().limit(40).skip(numberskip)
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
-});
-router.get("/findOne/pants/:id", validateObjectid, (req, res) => {
-    let id = req.params.id
-    pantsproduct.findOne({ _id: id })
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
-});
-router.get("/findOne/Shirts/:id", validateObjectid, (req, res) => {
-    let id = req.params.id
-    Shirtsproduct.findOne({ _id: id })
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
-});
-router.get("/findOne/shoes/:id", validateObjectid, (req, res) => {
-    let id = req.params.id
-    shoesproduct.findOne({ _id: id })
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
-});
 
 export { router as FileRouter };

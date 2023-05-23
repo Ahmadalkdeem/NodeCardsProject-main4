@@ -2,6 +2,7 @@ export const urlRegex = /^https?:\/\/(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-
 export const phoneRegex = /^\d{2,3}-\d{7}$/;
 export const passwordRegex = /^[a-zA-Z]\w{7,14}$/;
 export const fullNameRegex = /^[\p{L}\p{M}\p{Zs}'-]+([\p{Zs}'-][\p{L}\p{M}\p{Zs}'-]+)*$/u;
+export const numberRegex = /^\d{6}$/;
 export const valMail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 export const addressRegex = /^[\p{L}\p{M}\p{Zs}0-9]+$/u;
 export const cityRegex = /^[\p{L}\p{M}\p{Zs}]+$/u;

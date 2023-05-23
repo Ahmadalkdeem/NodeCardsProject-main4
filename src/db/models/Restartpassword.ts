@@ -2,6 +2,6 @@ import { model } from "mongoose";
 import { RestartpasswordSchema } from "../schemas/Restartpassword.js";
 
 // ~Class in JS
-const Restartpassword = model("Restartpassword", RestartpasswordSchema);
+const Restartpassword1 = model("Restartpassword", RestartpasswordSchema);
 
-export { Restartpassword };
+export { Restartpassword1 };

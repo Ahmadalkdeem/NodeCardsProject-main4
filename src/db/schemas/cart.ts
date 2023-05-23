@@ -9,6 +9,7 @@ const cartsSchema = new Schema({
     cart: String,
     date: Date,
     pricecart: Number,
-    arr: [],
+    status: Boolean,
+    arr: []
 });
 export { cartsSchema };

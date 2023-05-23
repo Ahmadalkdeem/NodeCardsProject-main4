@@ -8,17 +8,45 @@ import { userAlreadyExists } from "../middleware/userAlreadyExists.js";
 import { validateToken } from "../middleware/validtetoken/validtetoken.js";
 import bcrypt from "bcryptjs";
 import { validateSignIn } from "../middleware/verifySignInBody.js";
-import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateMail } from "../middleware/validateMail.js";
-import { validateObjectid } from "../middleware/validateObjectid.js";
 import { ForgotPassword } from "../middleware/ForgotPassword.js";
-import { validatenumber } from "../middleware/number/number.js";
-import { numbersSchema } from "../validators/number.js";
-import { Restartpassword } from "../db/models/Restartpassword.js";
-
+import { Restartpassword1 } from "../db/models/Restartpassword.js";
 import nodemailer from 'nodemailer'
+import { validaterestart } from "../middleware/validaterestart.js";
 
 const router = Router();
+router.post("/signin", validateSignIn, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(401).json({ message: "No Such User" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid Credentials" });
+    }
+    const token = jwt.sign({ email: user.email, password: req.body.password }, authConfig.secret, {
+      expiresIn: '30d'
+    })
+    return res.status(200).json(
+      {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        roles: user.roles,
+        accessToken: token
+      }
+    );
+  } catch (e) {
+    return res.status(500).json({ message: "server error", error: e })
+  }
+});
+
 router.post("/valtoken", validateToken, async (req: any, res) => {
   try {
 
@@ -93,6 +121,8 @@ router.post('/Restartpassword', validateMail, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    let randomNumber = Math.floor(Math.random() * 100000000);
+    let formattedNumber: any = ("000000" + randomNumber).slice(-6);
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -101,8 +131,6 @@ router.post('/Restartpassword', validateMail, async (req, res) => {
         pass: authConfig.pasword
       }
     });
-    let randomNumber = Math.floor(Math.random() * 100000000);
-    let formattedNumber = ("000000" + randomNumber).slice(-6);
     const message = {
       from: 'ahmadalkdeem@gmail.com',
       to: body.email,
@@ -114,6 +142,7 @@ router.post('/Restartpassword', validateMail, async (req, res) => {
       if (error) {
         return res.status(400).json({ error: error, ahmad: 'ahmad' })
       } else {
+        Restartpassword1.insertMany({ email: body.email, number: formattedNumber, date: new Date() });
         return res.status(200).json({ good: 'good', number: formattedNumber })
       }
     });
@@ -122,105 +151,26 @@ router.post('/Restartpassword', validateMail, async (req, res) => {
     return res.status(500).json({ message: "server error", email: req.body.email, error: e })
   }
 });
-
-
-//validateSignIn
-router.post("/signin", validateSignIn, async (req, res) => {
+router.post('/Restartpassword2', validaterestart, async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const body = _.pick(req.body, "email", 'password', 'number');
+    const user = await Restartpassword1.findOne({ email: body.email, number: body.number });
     if (!user) {
-      return res.status(401).json({ message: "No Such User" });
+      return res.status(404).json({ message: 'password not found' });
     }
-
-
-    const isPasswordValid = await bcrypt.compare(
-      req.body.password,
-      user.password
+    await Restartpassword1.deleteMany({ email: body.email });
+    body.password = await bcrypt.hash(body.password, 12);
+    let update = await User.updateOne(
+      { email: body.email },
+      { $set: { password: body.password } }
     );
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid Credentials" });
+    if (!update) {
+      return res.status(404).json({ message: 'error' });
     }
-    const token = jwt.sign({ email: user.email, password: req.body.password }, authConfig.secret, {
-      expiresIn: '30d'
-    })
-    return res.status(200).json(
-      {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        roles: user.roles,
-        accessToken: token
-      }
-    );
+    return res.status(200).json({ good: 'good' });
+
   } catch (e) {
-    return res.status(500).json({ message: "server error", error: e })
-  }
-});
-
-router.get('/users/:accessToken/:skip', validateToken2, validatenumber, async (req, res) => {
-  try {
-    let numberskip = Number(req.params.skip)
-    const user = await User.find({}, { username: 1, email: 1, roles: 1 }).limit(50).skip(numberskip);
-    if (!user) {
-      return res.status(401).json({ message: "No Such User" });
-    }
-    return res.status(200).json(user);
-  } catch (e) {
-    return res.status(500).json({ message: "server error", error: e })
-  }
-});
-router.delete('/users/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
-  try {
-    const user = await User.deleteOne({ _id: req.params.id });
-    if (!user) {
-      return res.status(401).json({ message: "No Such User" });
-    }
-
-
-    return res.status(200).json({ Message: 'susces', id: req.params.id });
-  } catch (e) {
-    return res.status(500).json({ message: "server error", error: e })
-  }
-});
-router.put('/users/admin/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
-  try {
-    const users = req.params.id;
-    const user = await User.updateOne({ _id: users }, { roles: ['admin'] });
-    if (!user) {
-      return res.status(401).json({ message: "No Such User" });
-    }
-
-
-    return res.status(200).json({ Message: 'susces', user: `${req.params.users} ahmad` });
-  } catch (e) {
-    return res.status(500).json({ message: "server error", error: e })
-  }
-});
-router.put('/users/user/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
-  try {
-    const users = req.params.id;
-    const user = await User.updateOne({ _id: users }, { roles: ['user'] });
-    if (!user) {
-      return res.status(401).json({ message: "No Such User" });
-    }
-
-
-    return res.status(200).json({ Message: 'susces', user: req.params.users });
-  } catch (e) {
-    return res.status(500).json({ message: "server error", error: e })
-  }
-});
-router.post('/getuser', validateMail, async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.body.email }, { username: 1, email: 1, roles: 1 });
-    if (!user) {
-      return res.status(401).json({ message: "No Such User" });
-    }
-
-    return res.status(200).json(user);
-  } catch (e) {
-    return res.status(500).json({ message: "server error", error: e })
+    return res.status(500).json({ message: "server error", email: req.body.email, error: e })
   }
 });
 
