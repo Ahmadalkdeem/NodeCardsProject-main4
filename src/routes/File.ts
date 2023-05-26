@@ -1,13 +1,11 @@
 import { Router } from "express";
 const router = Router();
-import _ from "underscore";
 import { pantsproduct, Shirtsproduct, shoesproduct } from "../db/models/product.js";
 import { upload } from "../middleware/uplodefile.js";
 import fs from "fs";
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateCard } from "../middleware/card.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
-import { validatenumber } from "../middleware/number/number.js";
 
 router.post('/user-profile/:accessToken', validateToken2, upload, validateCard, async (req: any, res) => {
     try {

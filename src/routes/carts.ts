@@ -16,7 +16,8 @@ let pipeline = [
         $project: {
             src: 1,
             _id: 1,
-            category2: 1,
+            brand: 1,
+            category: 1,
             name: 1,
         }
     }
