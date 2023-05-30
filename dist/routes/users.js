@@ -11,7 +11,7 @@ import { Router } from "express";
 import _ from "underscore";
 import jwt from "jsonwebtoken";
 import authConfig from '../db/config/auth.config.js';
-import { User } from "../db/models/user.js";
+import { users } from "../db/models/user.js";
 import { validateSignUp } from "../middleware/verifySignupBody.js";
 import { userAlreadyExists } from "../middleware/userAlreadyExists.js";
 import { validateToken } from "../middleware/validtetoken/validtetoken.js";
@@ -19,13 +19,16 @@ import bcrypt from "bcryptjs";
 import { validateSignIn } from "../middleware/verifySignInBody.js";
 import { validateMail } from "../middleware/validateMail.js";
 import { ForgotPassword } from "../middleware/ForgotPassword.js";
-import { Restartpassword1 } from "../db/models/Restartpassword.js";
 import nodemailer from 'nodemailer';
-import { validaterestart } from "../middleware/validaterestart.js";
+import { valpassword } from "../middleware/valpassword.js";
+import { google } from "googleapis";
+import { validateToken3 } from "../middleware/validtetoken/validateToken3.js";
+let oAuth2Client = new google.auth.OAuth2(authConfig.clientId, authConfig.clientSecret, authConfig.regected_url);
+oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token });
 const router = Router();
 router.post("/signin", validateSignIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield User.findOne({ email: req.body.email });
+        const user = yield users.findOne({ email: req.body.email });
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
         }
@@ -34,7 +37,7 @@ router.post("/signin", validateSignIn, (req, res) => __awaiter(void 0, void 0, v
             return res.status(401).json({ message: "Invalid Credentials" });
         }
         const token = jwt.sign({ email: user.email, password: req.body.password }, authConfig.secret, {
-            expiresIn: '30d'
+            expiresIn: '1d'
         });
         return res.status(200).json({
             id: user._id,
@@ -50,7 +53,7 @@ router.post("/signin", validateSignIn, (req, res) => __awaiter(void 0, void 0, v
 }));
 router.post("/valtoken", validateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield User.findOne({ email: req.email });
+        const user = yield users.findOne({ email: req.email });
         const isPasswordValid = yield bcrypt.compare(req.password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({ message: "Invalid Credentials" });
@@ -70,7 +73,7 @@ router.post("/signup", validateSignUp, userAlreadyExists, (req, res) => __awaite
         expiresIn: '1d'
     });
     body.password = yield bcrypt.hash(body.password, 12);
-    const user = new User(body);
+    const user = new users(body);
     try {
         user.roles = ['user'];
         yield user.save();
@@ -84,19 +87,19 @@ router.post("/signup", validateSignUp, userAlreadyExists, (req, res) => __awaite
 router.post('/ForgotPassword', ForgotPassword, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = _.pick(req.body, "email", "password", 'password2');
-        const token = jwt.sign({ email: body.email, password: body.password2 }, authConfig.secret, {
-            expiresIn: '1d'
-        });
-        const user = yield User.findOne({ email: body.email });
+        const user = yield users.findOne({ email: body.email });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+        const token = jwt.sign({ email: body.email, password: body.password2 }, authConfig.secret, {
+            expiresIn: '1d'
+        });
         const isPasswordValid = yield bcrypt.compare(body.password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({ message: "Invalid Credentials" });
         }
         body.password2 = yield bcrypt.hash(body.password2, 12);
-        let update = yield User.updateOne({ email: body.email }, { $set: { password: body.password2 } });
+        let update = yield users.updateOne({ email: body.email }, { $set: { password: body.password2 } });
         if (!update) {
             return res.status(404).json({ message: 'error' });
         }
@@ -109,31 +112,38 @@ router.post('/ForgotPassword', ForgotPassword, (req, res) => __awaiter(void 0, v
 router.post('/Restartpassword', validateMail, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = _.pick(req.body, "email");
-        const user = yield User.findOne({ email: body.email });
+        const user = yield users.findOne({ email: body.email });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
         let randomNumber = Math.floor(Math.random() * 100000000);
         let formattedNumber = ("000000" + randomNumber).slice(-6);
+        const token = jwt.sign({ email: user.email, randomnumber: req.body.password }, authConfig.secret, {
+            expiresIn: '1h'
+        });
+        let accessToken = yield oAuth2Client.getAccessToken();
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
+                type: 'OAuth2',
                 user: 'ahmadalkdeem@gmail.com',
-                pass: authConfig.pasword
+                clientId: authConfig.clientId,
+                clientSecret: authConfig.clientSecret,
+                refreshToken: authConfig.refrech_token,
+                accessToken: accessToken.token
             }
         });
         const message = {
             from: 'ahmadalkdeem@gmail.com',
             to: body.email,
             subject: 'Subject of the email',
-            text: formattedNumber
+            text: `http://localhost:3000/pasword/token/${token}`
         };
         yield transporter.sendMail(message, function (error, info) {
             if (error) {
                 return res.status(400).json({ error: error, ahmad: 'ahmad' });
             }
             else {
-                Restartpassword1.insertMany({ email: body.email, number: formattedNumber, date: new Date() });
                 return res.status(200).json({ good: 'good', number: formattedNumber });
             }
         });
@@ -142,16 +152,11 @@ router.post('/Restartpassword', validateMail, (req, res) => __awaiter(void 0, vo
         return res.status(500).json({ message: "server error", email: req.body.email, error: e });
     }
 }));
-router.post('/Restartpassword2', validaterestart, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/Restartpassword2', valpassword, validateToken3, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const body = _.pick(req.body, "email", 'password', 'number');
-        const user = yield Restartpassword1.findOne({ email: body.email, number: body.number });
-        if (!user) {
-            return res.status(404).json({ message: 'password not found' });
-        }
-        yield Restartpassword1.deleteMany({ email: body.email });
+        const body = _.pick(req.body, "token", 'password');
         body.password = yield bcrypt.hash(body.password, 12);
-        let update = yield User.updateOne({ email: body.email }, { $set: { password: body.password } });
+        let update = yield users.updateOne({ email: req.email }, { $set: { password: body.password } });
         if (!update) {
             return res.status(404).json({ message: 'error' });
         }

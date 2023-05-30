@@ -7,13 +7,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import corn from 'node-cron';
-import { Carts } from '../../db/models/cart.js';
-const corn1 = () => __awaiter(void 0, void 0, void 0, function* () {
-    corn.schedule('0 0 1 * *', () => __awaiter(void 0, void 0, void 0, function* () {
-        const twoMonthsAgo = new Date();
-        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-        const result = yield Carts.deleteOne({ date: { $lte: twoMonthsAgo } });
-    }));
+import _ from "underscore";
+import { validatefindSchema } from "../../validators/validateFind.js";
+const validatefind = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const body = _.pick(req.query, "brand", 'colors', 'brands');
+        const { error } = validatefindSchema.validate(body);
+        if (error) {
+            return res.status(400).json({
+                message: "Validation Failed",
+                body: body,
+                errors: error.details.map((ed) => ed.message),
+            });
+        }
+        next();
+    }
+    catch (e) {
+        res.status(500).json({ message: e });
+    }
 });
-export { corn1 as cornRouter };
+export { validatefind };

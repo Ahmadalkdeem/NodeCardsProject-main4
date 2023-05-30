@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Router } from "express";
 const router = Router();
-import { Cart } from "../db/models/cart.js";
+import { Carts } from "../db/models/cart.js";
 import { date } from '../db/models/date.js';
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validatedate } from "../middleware/date.js";
@@ -18,7 +18,7 @@ router.get('/detales/:accessToken/:limet/:sort', validateToken2, validatenumber2
     try {
         let sort = Number(req.params.sort);
         let limet = Number(req.params.limet);
-        Cart.aggregate([
+        Carts.aggregate([
             {
                 $unwind: "$arr"
             },

@@ -7,10 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { User } from "../db/models/user.js";
+import { users } from "../db/models/user.js";
 const userAlreadyExists = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let found = yield User.findOne({ email: req.body.email });
+        let found = yield users.findOne({ email: req.body.email });
         if (found) {
             return res.status(400).json({ message: "Email already exists" });
         }

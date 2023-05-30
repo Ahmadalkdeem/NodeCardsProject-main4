@@ -40,7 +40,7 @@ const Finddate = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                     ]
                 },
             ],
-            price: { $gt: item.price[0], $lt: item.price[1] }
+            // price: { $gt: item.price[0], $lt: item.price[1] }
         };
         req.find = x;
         next();

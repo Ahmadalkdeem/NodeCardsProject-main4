@@ -10,13 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import jwt from "jsonwebtoken";
 import authConfig from "../../db/config/auth.config.js";
 import { users } from "../../db/models/user.js";
-const validateToken2 = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+import _ from "underscore";
+const validateToken3 = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const token = req.params.accessToken;
-        if (!token) {
-            return res.status(403).json({ message: "No Token Provided", token: 'req.body.token' });
+        const body = _.pick(req.body, "token", 'password');
+        if (!body.token) {
+            return res.status(403).json({ message: "No Token Provided" });
         }
-        jwt.verify(token, authConfig.secret, (err, payload) => __awaiter(void 0, void 0, void 0, function* () {
+        jwt.verify(body.token, authConfig.secret, (err, payload) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {
                 return res.status(403).json({ message: "Invalid Token" });
             }
@@ -24,19 +25,12 @@ const validateToken2 = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             if (!user) {
                 return res.status(401).json({ message: "No Such User" });
             }
-            // const isPasswordValid = await bcrypt.compare(
-            //     payload.password,
-            //     user.password
-            // );
-            // if (!isPasswordValid) {
-            //     return res.status(401).json({ message: "Invalid Credentials" });
-            // }
-            if (user.roles[0] === 'admin') {
-                next();
-            }
+            req.email = payload.email;
+            next();
         }));
     }
     catch (_a) {
+        return res.status(401).json({ message: 'ahmad' });
     }
 });
-export { validateToken2 };
+export { validateToken3 };

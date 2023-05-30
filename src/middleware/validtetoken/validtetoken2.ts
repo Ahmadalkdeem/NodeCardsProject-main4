@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 import { RequestHandler } from "express";
 import authConfig from "../../db/config/auth.config.js";
-import { User } from "../../db/models/user.js";
-import bcrypt from "bcryptjs";
+import { users } from "../../db/models/user.js";
 
 const validateToken2: RequestHandler = async (req: any, res, next) => {
     try {
@@ -15,18 +14,18 @@ const validateToken2: RequestHandler = async (req: any, res, next) => {
             if (err) {
                 return res.status(403).json({ message: "Invalid Token" });
             }
-            const user: any = await User.findOne({ email: payload.email });
+            const user: any = await users.findOne({ email: payload.email });
             if (!user) {
                 return res.status(401).json({ message: "No Such User" });
             }
-            const isPasswordValid = await bcrypt.compare(
-                payload.password,
-                user.password
-            );
+            // const isPasswordValid = await bcrypt.compare(
+            //     payload.password,
+            //     user.password
+            // );
 
-            if (!isPasswordValid) {
-                return res.status(401).json({ message: "Invalid Credentials" });
-            }
+            // if (!isPasswordValid) {
+            //     return res.status(401).json({ message: "Invalid Credentials" });
+            // }
             if (user.roles[0] === 'admin') {
                 next()
             }

@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
 import _ from "underscore";
-import { Cart } from "../db/models/cart.js";
+import { Carts } from "../db/models/cart.js";
 import { date } from '../db/models/date.js'
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateorder } from "../middleware/order.js";
@@ -88,7 +88,7 @@ router.post('/neworder', validateorder, neworder, async (req: any, res) => {
             ...detales
         }
 
-        let cart = await new Cart(arr).save()
+        let cart = await new Carts(arr).save()
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -124,7 +124,7 @@ router.post('/neworder', validateorder, neworder, async (req: any, res) => {
 router.get('/getorders/:accessToken/:skip', validateToken2, validatenumber, async (req: any, res) => {
     try {
         let skip = Number(req.params.skip)
-        Cart.aggregate([
+        Carts.aggregate([
             // { $match: { status: false } },
             { $skip: skip },
             { $limit: 30 },
@@ -143,7 +143,7 @@ router.get('/getorders/:accessToken/:skip', validateToken2, validatenumber, asyn
 
 router.put('/putoneorder/:accessToken/:id', validateToken2, validateObjectid, async (req: any, res) => {
     try {
-        Cart.updateOne({ _id: req.params.id }, { $set: { status: true } }).then((e) => {
+        Carts.updateOne({ _id: req.params.id }, { $set: { status: true } }).then((e) => {
             res.json({ good: 'good' })
         })
     } catch (e) {
@@ -154,7 +154,7 @@ router.put('/putoneorder/:accessToken/:id', validateToken2, validateObjectid, as
 })
 router.get('/getoneorder/:accessToken/:id', validateToken2, validateObjectid, async (req: any, res) => {
     try {
-        Cart.aggregate([
+        Carts.aggregate([
             { $match: { _id: new ObjectId(req.params.id) } },
             { $limit: 1 },
             ...aggregte

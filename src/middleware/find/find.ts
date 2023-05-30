@@ -34,7 +34,7 @@ const Finddate: RequestHandler = async (req: any, res, next) => {
                     ]
                 },
             ],
-            price: { $gt: item.price[0], $lt: item.price[1] }
+            // price: { $gt: item.price[0], $lt: item.price[1] }
         };
         req.find = x
         next()
