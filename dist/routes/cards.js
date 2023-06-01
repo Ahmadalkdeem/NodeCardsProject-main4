@@ -76,10 +76,70 @@ router.get("/brands/:skip", validatenumber, validatefind, (req, res) => {
                 ]
             }
         }, { $sort: { _id: 1 } }
-        // ,{ $limit: 1 }
     ];
     shoesproduct.aggregate(query).then((result) => {
         res.json(result);
+    });
+});
+router.get("/brands/filtering/:skip", validatenumber, validatefind, Finddate, (req, res) => {
+    let numberskip = Number(req.params.skip);
+    let arr = [];
+    if (req.query.sizes !== undefined) {
+        const sizes = [];
+        req.query.sizes.forEach((e) => {
+            sizes.push({ 'stock.size': e });
+        });
+        if (sizes.length !== 0) {
+            arr.push({ $or: sizes });
+        }
+    }
+    if (req.query.colors !== undefined) {
+        const colors = [];
+        req.query.colors.forEach((e) => {
+            colors.push({ 'stock.colors.color': e });
+        });
+        if (colors.length !== 0) {
+            arr.push({ $or: colors });
+        }
+    }
+    if (req.query.brands !== undefined) {
+        const brands = [];
+        req.query.brands.forEach((e) => {
+            brands.push({ brand: e });
+        });
+        if (brands.length !== 0) {
+            arr.push({ $or: brands });
+        }
+    }
+    let match = {
+        $match: {
+            $and: arr
+        }
+    };
+    const query = [
+        match,
+        project,
+        {
+            $unionWith: {
+                coll: 'shirtsproducts', pipeline: [
+                    match,
+                    project
+                ]
+            }
+        },
+        {
+            $unionWith: {
+                coll: 'pantsproducts', pipeline: [
+                    match,
+                    project
+                ]
+            }
+        }, { $sort: { _id: 1 } }
+    ];
+    shoesproduct.aggregate(query).then((result) => {
+        res.json(result);
+    }).catch((e) => {
+        res.status(400).json(query);
     });
 });
 export { router as CardsRouter };

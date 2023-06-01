@@ -6,7 +6,7 @@ import { upload } from "../middleware/uplodefile.js";
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateCard } from "../middleware/cardupdate.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
-
+import { ObjectId } from "mongodb";
 import fs from "fs";
 router.put('/:id/:accessToken', validateToken2, validateObjectid, upload, validateCard, async (req: any, res) => {
     try {
@@ -38,20 +38,20 @@ router.put('/:id/:accessToken', validateToken2, validateObjectid, upload, valida
         }
         if (req.body.fcategory === req.body.setPermissivecategory) {
             if (req.body.setPermissivecategory === 'shoes') {
-                await shoesproduct.replaceOne({ _id: req.params.id }, item)
+                await shoesproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item)
                 res.status(200).json({
                     message: "good",
                 })
             }
             if (req.body.setPermissivecategory === 'pants') {
-                await pantsproduct.replaceOne({ _id: req.params.id }, item)
+                await pantsproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item)
                 res.status(200).json({
                     message: "good",
                 })
             }
 
             if (req.body.setPermissivecategory === 'Shirts') {
-                await Shirtsproduct.replaceOne({ _id: req.params.id }, item)
+                await Shirtsproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item)
                 res.status(200).json({
                     message: "good",
                 })
@@ -61,14 +61,14 @@ router.put('/:id/:accessToken', validateToken2, validateObjectid, upload, valida
 
 
             if (req.body.fcategory === 'shoes') {
-                await shoesproduct.deleteOne({ _id: req.params.id })
+                await shoesproduct.deleteOne({ _id: new ObjectId(req.params.id) })
             }
             if (req.body.fcategory === 'pants') {
-                await pantsproduct.deleteOne({ _id: req.params.id })
+                await pantsproduct.deleteOne({ _id: new ObjectId(req.params.id) })
             }
 
             if (req.body.fcategory === 'Shirts') {
-                await Shirtsproduct.deleteOne({ _id: req.params.id })
+                await Shirtsproduct.deleteOne({ _id: new ObjectId(req.params.id) })
             }
             if (req.body.setPermissivecategory === 'Shirts') {
                 await new Shirtsproduct(item).save()

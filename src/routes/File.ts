@@ -6,7 +6,7 @@ import fs from "fs";
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateCard } from "../middleware/card.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
-
+import { ObjectId } from "mongodb";
 router.post('/user-profile/:accessToken', validateToken2, upload, validateCard, async (req: any, res) => {
     try {
         let potos = []
@@ -52,7 +52,7 @@ router.post('/user-profile/:accessToken', validateToken2, upload, validateCard, 
 
 router.delete("/delete/pants/:id/:accessToken", validateToken2, validateObjectid, async (req, res) => {
     try {
-        await pantsproduct.findOne({ _id: req.params.id }, { src: 1, _id: 0 }).then((src: any) => {
+        await pantsproduct.findOne({ _id: new ObjectId(req.params.id) }, { src: 1, _id: 0 }).then((src: any) => {
             let arr = [...src.src]
             for (let a = 0; a < arr.length; a++) {
                 fs.unlink(`./public/${arr[a].split('/').pop()}`, (err) => {
@@ -60,7 +60,7 @@ router.delete("/delete/pants/:id/:accessToken", validateToken2, validateObjectid
                 });
             }
         })
-        await pantsproduct.deleteOne({ _id: req.params.id })
+        await pantsproduct.deleteOne({ _id: new ObjectId(req.params.id) })
             .then((result) => {
                 res.json({ id: result, Message: 'susces' });
             })
@@ -68,7 +68,7 @@ router.delete("/delete/pants/:id/:accessToken", validateToken2, validateObjectid
 });
 router.delete("/delete/Shirts/:id/:accessToken", validateToken2, validateObjectid, async (req, res) => {
     try {
-        await Shirtsproduct.findOne({ _id: req.params.id }, { src: 1, _id: 0 }).then((src: any) => {
+        await Shirtsproduct.findOne({ _id: new ObjectId(req.params.id) }, { src: 1, _id: 0 }).then((src: any) => {
             let arr = [...src.src]
 
             for (let a = 0; a < arr.length; a++) {
@@ -78,7 +78,7 @@ router.delete("/delete/Shirts/:id/:accessToken", validateToken2, validateObjecti
             }
         })
 
-        await Shirtsproduct.deleteOne({ _id: req.params.id })
+        await Shirtsproduct.deleteOne({ _id: new ObjectId(req.params.id) })
             .then((result) => {
                 res.json({ id: result, Message: 'susces' });
             })
@@ -89,13 +89,13 @@ router.delete("/delete/Shirts/:id/:accessToken", validateToken2, validateObjecti
 });
 router.delete("/delete/shoes/:id/:accessToken", validateToken2, validateObjectid, async (req, res) => {
     try {
-        await shoesproduct.findOne({ _id: req.params.id }, { src: 1, _id: 0 }).then((src: any) => {
+        await shoesproduct.findOne({ _id: new ObjectId(req.params.id) }, { src: 1, _id: 0 }).then((src: any) => {
             let arr = [...src.src]
             for (let a = 0; a < arr.length; a++) {
                 fs.unlink(`./public/${arr[a].split('/').pop()}`, (err) => { });
             }
         })
-        await shoesproduct.deleteOne({ _id: req.params.id })
+        await shoesproduct.deleteOne({ _id: new ObjectId(req.params.id) })
             .then((result) => {
                 res.json({ id: result, Message: 'susces' });
             })

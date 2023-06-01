@@ -23,8 +23,6 @@ import nodemailer from 'nodemailer';
 import { valpassword } from "../middleware/valpassword.js";
 import { google } from "googleapis";
 import { validateToken3 } from "../middleware/validtetoken/validateToken3.js";
-let oAuth2Client = new google.auth.OAuth2(authConfig.clientId, authConfig.clientSecret, authConfig.regected_url);
-oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token });
 const router = Router();
 router.post("/signin", validateSignIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -111,6 +109,8 @@ router.post('/ForgotPassword', ForgotPassword, (req, res) => __awaiter(void 0, v
 }));
 router.post('/Restartpassword', validateMail, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        let oAuth2Client = new google.auth.OAuth2(authConfig.clientId, authConfig.clientSecret, authConfig.regected_url);
+        oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token });
         const body = _.pick(req.body, "email");
         const user = yield users.findOne({ email: body.email });
         if (!user) {
@@ -135,7 +135,7 @@ router.post('/Restartpassword', validateMail, (req, res) => __awaiter(void 0, vo
         });
         const message = {
             from: 'ahmadalkdeem@gmail.com',
-            to: body.email,
+            to: req.body.email,
             subject: 'Subject of the email',
             text: `http://localhost:3000/pasword/token/${token}`
         };

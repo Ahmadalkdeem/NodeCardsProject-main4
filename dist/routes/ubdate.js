@@ -14,6 +14,7 @@ import { upload } from "../middleware/uplodefile.js";
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateCard } from "../middleware/cardupdate.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
+import { ObjectId } from "mongodb";
 import fs from "fs";
 router.put('/:id/:accessToken', validateToken2, validateObjectid, upload, validateCard, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -42,19 +43,19 @@ router.put('/:id/:accessToken', validateToken2, validateObjectid, upload, valida
         };
         if (req.body.fcategory === req.body.setPermissivecategory) {
             if (req.body.setPermissivecategory === 'shoes') {
-                yield shoesproduct.replaceOne({ _id: req.params.id }, item);
+                yield shoesproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item);
                 res.status(200).json({
                     message: "good",
                 });
             }
             if (req.body.setPermissivecategory === 'pants') {
-                yield pantsproduct.replaceOne({ _id: req.params.id }, item);
+                yield pantsproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item);
                 res.status(200).json({
                     message: "good",
                 });
             }
             if (req.body.setPermissivecategory === 'Shirts') {
-                yield Shirtsproduct.replaceOne({ _id: req.params.id }, item);
+                yield Shirtsproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item);
                 res.status(200).json({
                     message: "good",
                 });
@@ -62,13 +63,13 @@ router.put('/:id/:accessToken', validateToken2, validateObjectid, upload, valida
         }
         else if (req.body.fcategory !== req.body.setPermissivecategory) {
             if (req.body.fcategory === 'shoes') {
-                yield shoesproduct.deleteOne({ _id: req.params.id });
+                yield shoesproduct.deleteOne({ _id: new ObjectId(req.params.id) });
             }
             if (req.body.fcategory === 'pants') {
-                yield pantsproduct.deleteOne({ _id: req.params.id });
+                yield pantsproduct.deleteOne({ _id: new ObjectId(req.params.id) });
             }
             if (req.body.fcategory === 'Shirts') {
-                yield Shirtsproduct.deleteOne({ _id: req.params.id });
+                yield Shirtsproduct.deleteOne({ _id: new ObjectId(req.params.id) });
             }
             if (req.body.setPermissivecategory === 'Shirts') {
                 yield new Shirtsproduct(item).save();

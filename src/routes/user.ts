@@ -4,12 +4,13 @@ import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateMail } from "../middleware/validateMail.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
 import { validatenumber } from "../middleware/number/number.js";
+import { ObjectId } from "mongodb";
 const router = Router();
 
 router.get('/:accessToken/:skip', validateToken2, validatenumber, async (req, res) => {
     try {
         let numberskip = Number(req.params.skip)
-        const user = await users.find({}, { username: 1, email: 1, roles: 1 }).limit(50).skip(numberskip);
+        const user = await users.find({}, { username: 1, email: 1, roles: 1 }).limit(300).skip(numberskip);
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
         }
@@ -20,7 +21,7 @@ router.get('/:accessToken/:skip', validateToken2, validatenumber, async (req, re
 });
 router.delete('/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
     try {
-        const user = await users.deleteOne({ _id: req.params.id });
+        const user = await users.deleteOne({ _id: new ObjectId(req.params.id) });
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
         }
@@ -34,7 +35,7 @@ router.delete('/:id/:accessToken', validateToken2, validateObjectid, async (req,
 router.put('/admin/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
     try {
         const id = req.params.id;
-        const user = await users.updateOne({ _id: id }, { roles: ['admin'] });
+        const user = await users.updateOne({ _id: new ObjectId(id) }, { roles: ['admin'] });
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
         }
@@ -48,7 +49,7 @@ router.put('/admin/:id/:accessToken', validateToken2, validateObjectid, async (r
 router.put('/user/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
     try {
         const id = req.params.id;
-        const user = await users.updateOne({ _id: id }, { roles: ['user'] });
+        const user = await users.updateOne({ _id: new ObjectId(id) }, { roles: ['user'] });
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
         }
