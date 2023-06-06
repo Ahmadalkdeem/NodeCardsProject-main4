@@ -138,9 +138,13 @@ router.get('/getorders/:accessToken/:skip', validateToken2, validatenumber, (req
 }));
 router.put('/putoneorder/:accessToken/:id', validateToken2, validateObjectid, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        Carts.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status: true } }).then((e) => {
-            res.json({ good: 'good' });
-        });
+        let order = Carts.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status: true } });
+        if (order) {
+            res.json({ good: 'good', arr: req.params.id });
+        }
+        else {
+            res.json({ good: 'oops', arr: req.params.id });
+        }
     }
     catch (e) {
         res.status(400).json({

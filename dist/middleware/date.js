@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { dateRegex } from "../validators/utils.js";
 const validatedate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const str = dateRegex.test(req.params.str);
-        const end = dateRegex.test(req.params.str);
+        const str = dateRegex.test(req.query.str);
+        const end = dateRegex.test(req.query.str);
         if (!str) {
             return res.status(403).json({ message: "No date Provided" });
         }

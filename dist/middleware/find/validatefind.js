@@ -11,7 +11,7 @@ import _ from "underscore";
 import { validatefindSchema } from "../../validators/validateFind.js";
 const validatefind = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const body = _.pick(req.query, "sizes", 'colors', 'brands');
+        const body = _.pick(req.query, "sizes", 'colors', 'brands', 'categorys2', 'categorys');
         const { error } = validatefindSchema.validate(body);
         if (error) {
             return res.status(400).json({

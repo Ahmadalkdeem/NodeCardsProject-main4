@@ -18,7 +18,7 @@ const router = Router();
 router.get('/:accessToken/:skip', validateToken2, validatenumber, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let numberskip = Number(req.params.skip);
-        const user = yield users.find({}, { username: 1, email: 1, roles: 1 }).limit(300).skip(numberskip);
+        const user = yield users.find({}, { username: 1, email: 1, roles: 1 }).limit(100).skip(numberskip);
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
         }

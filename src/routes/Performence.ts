@@ -6,11 +6,18 @@ import { date } from '../db/models/date.js'
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validatedate } from "../middleware/date.js";
 import { validatenumber2 } from "../middleware/number/number2.js";
-router.get('/detales/:accessToken/:limet/:sort', validateToken2, validatenumber2, async (req: any, res) => {
+router.get('/detales/:accessToken/:limet/:sort', validateToken2, validatenumber2, validatedate, async (req: any, res) => {
     try {
         let sort = Number(req.params.sort)
         let limet = Number(req.params.limet)
         Carts.aggregate([
+            {
+                $match: {
+                    date: {
+                        $gte: new Date(req.query.str), $lte: new Date(req.query.end)
+                    }
+                }
+            },
             {
                 $unwind: "$arr"
             },
@@ -18,7 +25,6 @@ router.get('/detales/:accessToken/:limet/:sort', validateToken2, validatenumber2
                 $group: {
                     _id: {
                         id: "$arr.id",
-                        // color: "$arr.color"
                     },
                     count: {
                         $sum: "$arr.quantity"
@@ -114,10 +120,10 @@ router.get('/detales/:accessToken/:limet/:sort', validateToken2, validatenumber2
         })
     }
 })
-router.get('/getorders/detales/:accessToken/:str/:end', validateToken2, validatedate, async (req: any, res) => {
+router.get('/getorders/detales/:accessToken', validateToken2, validatedate, async (req: any, res) => {
     try {
-        const str = req.params.str;
-        const end = req.params.end;
+        const str = req.query.str;
+        const end = req.query.end;
         date.aggregate([
             {
                 $match: {
@@ -161,10 +167,10 @@ router.get('/getorders/detales/:accessToken/:str/:end', validateToken2, validate
     }
 })
 
-router.get('/getorders/count/:accessToken/:str/:end', validateToken2, validatedate, async (req: any, res) => {
+router.get('/getorders/count/:accessToken', validateToken2, validatedate, async (req: any, res) => {
     try {
-        const str = req.params.str;
-        const end = req.params.end;
+        const str = req.query.str;
+        const end = req.query.end;
         date.aggregate([
             {
                 $match: {

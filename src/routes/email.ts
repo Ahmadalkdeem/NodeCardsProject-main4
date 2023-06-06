@@ -40,7 +40,7 @@ router.get('/ahmad', async (req: any, res) => {
 
     } catch (e) {
         res.status(400).json({
-            error: 'oops',
+            error: e,
         })
     }
 })

@@ -48,7 +48,7 @@ router.get('/ahmad', (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (e) {
         res.status(400).json({
-            error: 'oops',
+            error: e,
         });
     }
 }));

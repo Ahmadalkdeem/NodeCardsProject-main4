@@ -3,7 +3,7 @@ import _ from "underscore";
 import { validatefindSchema } from "../../validators/validateFind.js";
 const validatefind: RequestHandler = async (req: any, res, next) => {
     try {
-        const body = _.pick(req.query, "sizes", 'colors', 'brands');
+        const body = _.pick(req.query, "sizes", 'colors', 'brands', 'categorys2', 'categorys');
         const { error } = validatefindSchema.validate(body);
 
         if (error) {
