@@ -1,10 +1,9 @@
 import fs from 'fs'
-const files = ['file1.jpg', 'file2.jpg', 'file3.jpg'];
 const directoryPath = './public';
 import { Shirtsproduct, pantsproduct, shoesproduct } from '../../db/models/product.js';
 import corn from 'node-cron'
 
-const corn2 = async () => {
+const file = async () => {
     corn.schedule('0 0 1 * *', async () => {
 
         let srs = await Shirtsproduct.aggregate([
@@ -49,7 +48,7 @@ const corn2 = async () => {
     })
 };
 
-export { corn2 as corn2Router };
+export { file as fileTest };
 
 
 

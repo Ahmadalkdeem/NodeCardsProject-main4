@@ -3,7 +3,7 @@ import { RequestHandler } from "express";
 import authConfig from "../../db/config/auth.config.js";
 
 const validateToken: RequestHandler = (req: any, res, next) => {
-    const token = req.body.token;
+    const token = req.body.params.accessToken;
 
     if (!token) {
         return res.status(403).json({ message: "No Token Provided", token: 'req.body.token' });

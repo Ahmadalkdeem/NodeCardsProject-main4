@@ -9,14 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { objectIdRegex } from "../validators/utils.js";
 const validateObjectid = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const id = objectIdRegex.test(req.params.id);
+        const id = objectIdRegex.test((_a = req.query.id) !== null && _a !== void 0 ? _a : req.body.params.id);
         if (!id) {
             return res.status(403).json({ message: "No id Provided" });
         }
         next();
     }
-    catch (_a) {
+    catch (_b) {
     }
 });
 export { validateObjectid };

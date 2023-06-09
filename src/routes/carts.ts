@@ -2,7 +2,6 @@ import { Router } from "express";
 const router = Router();
 import _ from "underscore";
 import { Carts } from "../db/models/cart.js";
-import { date } from '../db/models/date.js'
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateorder } from "../middleware/order.js";
 import { neworder } from "../middleware/neworder.js";
@@ -113,7 +112,6 @@ router.post('/neworder', validateorder, neworder, async (req: any, res) => {
                 console.log('Email sent: ');
             }
         });
-        await new date(detales).save()
         res.json({ a: 'aaa' });
     } catch (e) {
         res.status(400).json({
@@ -122,9 +120,9 @@ router.post('/neworder', validateorder, neworder, async (req: any, res) => {
     }
 })
 
-router.get('/getorders/:accessToken/:skip', validateToken2, validatenumber, async (req: any, res) => {
+router.get('/getorders', validateToken2, validatenumber, async (req: any, res) => {
     try {
-        let skip = Number(req.params.skip)
+        let skip = Number(req.query.skip)
         Carts.aggregate([
             { $match: { status: false } },
             { $skip: skip },
@@ -142,15 +140,11 @@ router.get('/getorders/:accessToken/:skip', validateToken2, validatenumber, asyn
     }
 })
 
-router.put('/putoneorder/:accessToken/:id', validateToken2, validateObjectid, async (req: any, res) => {
+router.put('/putoneorder', validateToken2, validateObjectid, async (req: any, res) => {
     try {
-        let order = Carts.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status: true } })
-        if (order) {
-            res.json({ good: 'good', arr: req.params.id })
-        } else {
-            res.json({ good: 'oops', arr: req.params.id })
-
-        }
+        let order = Carts.updateOne({ _id: new ObjectId(req.body.params.id) }, { $set: { status: true } }).then((e) => {
+            res.json({ good: 'good', id: req.body.params.id })
+        })
     } catch (e) {
         res.status(400).json({
             error: 'oops',
@@ -158,9 +152,9 @@ router.put('/putoneorder/:accessToken/:id', validateToken2, validateObjectid, as
     }
 })
 
-router.get('/getoneorder/:accessToken/:id', validateToken2, async (req: any, res) => {
+router.get('/getoneorder', validateToken2, async (req: any, res) => {
     try {
-        const { error } = schemaMail.validate({ email: req.params.id });
+        const { error } = schemaMail.validate({ email: req.query.email });
         if (error) {
             return res.status(400).json({
                 message: "email Failed",
@@ -168,7 +162,7 @@ router.get('/getoneorder/:accessToken/:id', validateToken2, async (req: any, res
             });
         }
         Carts.aggregate([
-            { $match: { Email: req.params.id } },
+            { $match: { Email: req.query.email } },
             ...aggregte,
             { $sort: { _id: -1 } }
         ]).then((e) => {
@@ -180,10 +174,10 @@ router.get('/getoneorder/:accessToken/:id', validateToken2, async (req: any, res
         })
     }
 })
-router.get('/getoneorder2/:accessToken/:id', validateToken2, validateObjectid, async (req: any, res) => {
+router.get('/getoneorderId', validateToken2, validateObjectid, async (req: any, res) => {
     try {
         Carts.aggregate([
-            { $match: { _id: new ObjectId(req.params.id) } },
+            { $match: { _id: new ObjectId(req.query.id) } },
             ...aggregte,
             { $limit: 1 }
         ]).then((e) => {
@@ -195,9 +189,9 @@ router.get('/getoneorder2/:accessToken/:id', validateToken2, validateObjectid, a
         })
     }
 })
-router.delete('/delate/:accessToken/:id', validateToken2, validateObjectid, async (req: any, res) => {
+router.delete('/delate', validateToken2, validateObjectid, async (req: any, res) => {
     try {
-        Carts.deleteOne({ _id: new ObjectId(req.params.id) }).then((e) => {
+        Carts.deleteOne({ _id: new ObjectId(req.query.id) }).then((e) => {
             res.json({ Message: 'susces' })
         })
     } catch (e) {

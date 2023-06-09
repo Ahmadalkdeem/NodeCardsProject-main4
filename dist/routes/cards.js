@@ -6,7 +6,7 @@ import { Finddate } from "../middleware/find/find.js";
 import { validatefind } from "../middleware/find/validatefind.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
 let project = { $project: { _id: 1, stock: 1, price2: 1, price: 1, category2: 1, category: 1, brand: 1, name: 1, description: 1, src: 1 } };
-router.get("/filtering/shoesproduct/:skip", validatenumber, validatefind, Finddate, (req, res) => {
+router.get("/filtering/shoesproduct", validatenumber, validatefind, Finddate, (req, res) => {
     let numberskip = Number(req.params.skip);
     shoesproduct.find(req.find).limit(50).skip(numberskip)
         .then((result) => {
@@ -14,7 +14,7 @@ router.get("/filtering/shoesproduct/:skip", validatenumber, validatefind, Findda
     })
         .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
 });
-router.get("/filtering/Shirtsproduct/:skip", validatenumber, validatefind, Finddate, (req, res) => {
+router.get("/filtering/Shirtsproduct", validatenumber, validatefind, Finddate, (req, res) => {
     let numberskip = Number(req.params.skip);
     Shirtsproduct.find(req.find).limit(50).skip(numberskip)
         .then((result) => {
@@ -22,7 +22,7 @@ router.get("/filtering/Shirtsproduct/:skip", validatenumber, validatefind, Findd
     })
         .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
 });
-router.get("/filtering/pantsproduct/:skip", validatenumber, validatefind, Finddate, (req, res) => {
+router.get("/filtering/pantsproduct", validatenumber, validatefind, Finddate, (req, res) => {
     let numberskip = Number(req.params.skip);
     pantsproduct.find(req.find).limit(50).skip(numberskip)
         .then((result) => {
@@ -30,32 +30,32 @@ router.get("/filtering/pantsproduct/:skip", validatenumber, validatefind, Findda
     })
         .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
 });
-router.get("/findOne/pants/:id", validateObjectid, (req, res) => {
-    let id = req.params.id;
+router.get("/findOne/pants", validateObjectid, (req, res) => {
+    let id = req.query.id;
     pantsproduct.findOne({ _id: id })
         .then((result) => {
         res.json(result);
     })
         .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
 });
-router.get("/findOne/Shirts/:id", validateObjectid, (req, res) => {
-    let id = req.params.id;
+router.get("/findOne/Shirts", validateObjectid, (req, res) => {
+    let id = req.query.id;
     Shirtsproduct.findOne({ _id: id })
         .then((result) => {
         res.json(result);
     })
         .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
 });
-router.get("/findOne/shoes/:id", validateObjectid, (req, res) => {
-    let id = req.params.id;
+router.get("/findOne/shoes", validateObjectid, (req, res) => {
+    let id = req.query.id;
     shoesproduct.findOne({ _id: id })
         .then((result) => {
         res.json(result);
     })
         .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
 });
-router.get("/brands/:skip", validatenumber, validatefind, (req, res) => {
-    let numberskip = Number(req.params.skip);
+router.get("/brands", validatenumber, validatefind, (req, res) => {
+    let numberskip = Number(req.query.skip);
     shoesproduct.aggregate([
         { $unionWith: { coll: "shirtsproducts" } },
         { $unionWith: { coll: "pantsproducts" } },
@@ -67,8 +67,8 @@ router.get("/brands/:skip", validatenumber, validatefind, (req, res) => {
         res.json(result);
     });
 });
-router.get("/brands/filtering/:skip", validatenumber, validatefind, Finddate, (req, res) => {
-    let numberskip = Number(req.params.skip);
+router.get("/brands/filtering", validatenumber, validatefind, Finddate, (req, res) => {
+    let numberskip = Number(req.query.skip);
     let arr = [];
     if (req.query.sizes !== undefined) {
         const sizes = [];

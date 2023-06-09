@@ -9,11 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import corn from 'node-cron';
 import { Carts } from '../../db/models/cart.js';
-const corn1 = () => __awaiter(void 0, void 0, void 0, function* () {
+const orders = () => __awaiter(void 0, void 0, void 0, function* () {
     corn.schedule('0 0 1 * *', () => __awaiter(void 0, void 0, void 0, function* () {
-        const twoMonthsAgo = new Date();
-        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-        const result = yield Carts.deleteOne({ date: { $lte: twoMonthsAgo } });
+        const twoYearsAgo = new Date();
+        twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 3);
+        const result = yield Carts.deleteMany({ date: { $lte: twoYearsAgo } });
     }));
 });
-export { corn1 as cornRouter };
+export { orders as ordersTest };

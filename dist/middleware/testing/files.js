@@ -8,11 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import fs from 'fs';
-const files = ['file1.jpg', 'file2.jpg', 'file3.jpg'];
 const directoryPath = './public';
 import { Shirtsproduct } from '../../db/models/product.js';
 import corn from 'node-cron';
-const corn2 = () => __awaiter(void 0, void 0, void 0, function* () {
+const file = () => __awaiter(void 0, void 0, void 0, function* () {
     corn.schedule('0 0 1 * *', () => __awaiter(void 0, void 0, void 0, function* () {
         let srs = yield Shirtsproduct.aggregate([
             { $unionWith: { coll: "shoesproducts", pipeline: [{ $project: { _id: 0, src: 1 } }] } },
@@ -55,4 +54,4 @@ const corn2 = () => __awaiter(void 0, void 0, void 0, function* () {
         });
     }));
 });
-export { corn2 as corn2Router };
+export { file as fileTest };

@@ -6,6 +6,7 @@ import { users } from "../db/models/user.js";
 import { validateSignUp } from "../middleware/verifySignupBody.js";
 import { userAlreadyExists } from "../middleware/userAlreadyExists.js";
 import { validateToken } from "../middleware/validtetoken/validtetoken.js";
+import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import bcrypt from "bcryptjs";
 import { validateSignIn } from "../middleware/verifySignInBody.js";
 import { validateMail } from "../middleware/validateMail.js";

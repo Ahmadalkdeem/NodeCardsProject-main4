@@ -13,7 +13,7 @@ import { users } from "../../db/models/user.js";
 import _ from "underscore";
 const validateToken3 = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const body = _.pick(req.body, "token", 'password');
+        const body = _.pick(req.body, "token");
         if (!body.token) {
             return res.status(403).json({ message: "No Token Provided" });
         }
@@ -30,7 +30,7 @@ const validateToken3 = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         }));
     }
     catch (_a) {
-        return res.status(401).json({ message: 'ahmad' });
+        return res.status(401).json({ message: 'ops' });
     }
 });
 export { validateToken3 };

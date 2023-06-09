@@ -2,14 +2,13 @@ import { Router } from "express";
 const router = Router();
 import _ from "underscore";
 import { Carts } from "../db/models/cart.js";
-import { date } from '../db/models/date.js'
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validatedate } from "../middleware/date.js";
 import { validatenumber2 } from "../middleware/number/number2.js";
-router.get('/detales/:accessToken/:limet/:sort', validateToken2, validatenumber2, validatedate, async (req: any, res) => {
+router.get('/detales', validateToken2, validatenumber2, validatedate, async (req: any, res) => {
     try {
-        let sort = Number(req.params.sort)
-        let limet = Number(req.params.limet)
+        let sort = Number(req.query.sort)
+        let limet = Number(req.query.limet)
         Carts.aggregate([
             {
                 $match: {
@@ -120,11 +119,11 @@ router.get('/detales/:accessToken/:limet/:sort', validateToken2, validatenumber2
         })
     }
 })
-router.get('/getorders/detales/:accessToken', validateToken2, validatedate, async (req: any, res) => {
+router.get('/getorders/detales', validateToken2, validatedate, async (req: any, res) => {
     try {
         const str = req.query.str;
         const end = req.query.end;
-        date.aggregate([
+        Carts.aggregate([
             {
                 $match: {
                     date: {
@@ -167,11 +166,11 @@ router.get('/getorders/detales/:accessToken', validateToken2, validatedate, asyn
     }
 })
 
-router.get('/getorders/count/:accessToken', validateToken2, validatedate, async (req: any, res) => {
+router.get('/getorders/count', validateToken2, validatedate, async (req: any, res) => {
     try {
         const str = req.query.str;
         const end = req.query.end;
-        date.aggregate([
+        Carts.aggregate([
             {
                 $match: {
                     date: {

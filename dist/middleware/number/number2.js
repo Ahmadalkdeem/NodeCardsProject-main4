@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { numbersSchema2 } from "../../validators/number.js";
 const validatenumber2 = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { error } = numbersSchema2.validate({ sort: Number(req.params.sort), limet: Number(req.params.limet) });
+        const { error } = numbersSchema2.validate({ sort: req.query.sort, limet: req.query.limet });
         if (error) {
             return res.status(400).json({
                 message: "Validation number",

@@ -10,12 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import jwt from "jsonwebtoken";
 import authConfig from "../../db/config/auth.config.js";
 import { users } from "../../db/models/user.js";
-const validateToken2 = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const validateToken4 = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const token = (_a = req.query.accessToken) !== null && _a !== void 0 ? _a : req.body.params.accessToken;
+        const token = req.params.accessToken;
         if (!token) {
-            return res.status(403).json({ message: "No Token Provided", token: req.body });
+            return res.status(403).json({ message: "No Token Provided", token: req.params.accessToken });
         }
         jwt.verify(token, authConfig.secret, (err, payload) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {
@@ -25,19 +24,12 @@ const validateToken2 = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             if (!user) {
                 return res.status(401).json({ message: "No Such User" });
             }
-            // const isPasswordValid = await bcrypt.compare(
-            //     payload.password,
-            //     user.password
-            // );
-            // if (!isPasswordValid) {
-            //     return res.status(401).json({ message: "Invalid Credentials" });
-            // }
             if (user.roles[0] === 'admin') {
                 next();
             }
         }));
     }
-    catch (_b) {
+    catch (_a) {
     }
 });
-export { validateToken2 };
+export { validateToken4 };

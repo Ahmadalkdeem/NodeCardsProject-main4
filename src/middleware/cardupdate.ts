@@ -3,7 +3,7 @@ import _ from "underscore";
 import { cardSchema2 } from "../validators/cards.js";
 import fs from "fs";
 const validateCard: RequestHandler = (req: any, res, next) => {
-    const body = _.pick(req.body, "titel", "brand", "setPermissivecategory", 'categoryselect2', 'description', 'saleprice', 'regularprice', 'fSizeOptions2', 'photos', 'photodelte', 'fcategory');
+    const body = _.pick(req.body, "titel", "brand", "setPermissivecategory", 'categoryselect2', 'description', 'saleprice', 'regularprice', 'fSizeOptions2', 'photos', 'photodelte', 'fcategory', 'id');
     body.photos = JSON.parse(body.photos)
     body.photodelte = JSON.parse(body.photodelte)
     body.fSizeOptions2 = JSON.parse(body.fSizeOptions2)

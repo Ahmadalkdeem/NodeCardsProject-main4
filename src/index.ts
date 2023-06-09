@@ -8,16 +8,16 @@ import { UpdatecardRouter } from "./routes/ubdate.js";
 import { cartRouter } from "./routes/carts.js";
 import { authRouter } from "./routes/users.js";
 import { PerformenceRouter } from "./routes/Performence.js";
-import { cornRouter } from "./middleware/testing/cronjob.js";
+import { ordersTest } from "./middleware/testing/cronjob.js";
 import { CardsRouter } from "./routes/cards.js";
 import bodyParser from "body-parser";
-import { corn2Router } from "./middleware/testing/files.js";
+import { fileTest } from "./middleware/testing/files.js";
 import { emailRouter } from "./routes/email.js";
 import { userRouter } from "./routes/user.js";
 const app = express();
 
-corn2Router()
-cornRouter()
+ordersTest()
+fileTest()
 connect()
 app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());

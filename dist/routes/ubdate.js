@@ -11,12 +11,11 @@ import { Router } from "express";
 const router = Router();
 import { pantsproduct, Shirtsproduct, shoesproduct } from "../db/models/product.js";
 import { upload } from "../middleware/uplodefile.js";
-import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
+import { validateToken4 } from "../middleware/validtetoken/validtetoken4.js";
 import { validateCard } from "../middleware/cardupdate.js";
-import { validateObjectid } from "../middleware/validateObjectid.js";
 import { ObjectId } from "mongodb";
 import fs from "fs";
-router.put('/:id/:accessToken', validateToken2, validateObjectid, upload, validateCard, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put('/:accessToken', validateToken4, upload, validateCard, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let arr = JSON.parse(req.body.photodelte);
         for (let a = 0; a < arr.length; a++) {
@@ -43,54 +42,39 @@ router.put('/:id/:accessToken', validateToken2, validateObjectid, upload, valida
         };
         if (req.body.fcategory === req.body.setPermissivecategory) {
             if (req.body.setPermissivecategory === 'shoes') {
-                yield shoesproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item);
-                res.status(200).json({
-                    message: "good",
-                });
+                yield shoesproduct.replaceOne({ _id: new ObjectId(req.body.id) }, item);
+                return res.status(200).json(item);
             }
             if (req.body.setPermissivecategory === 'pants') {
-                yield pantsproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item);
-                res.status(200).json({
-                    message: "good",
-                });
+                yield pantsproduct.replaceOne({ _id: new ObjectId(req.body.id) }, item);
+                return res.status(200).json(item);
             }
             if (req.body.setPermissivecategory === 'Shirts') {
-                yield Shirtsproduct.replaceOne({ _id: new ObjectId(req.params.id) }, item);
-                res.status(200).json({
-                    message: "good",
-                });
+                yield Shirtsproduct.replaceOne({ _id: new ObjectId(req.body.id) }, item);
+                return res.status(200).json(item);
             }
         }
         else if (req.body.fcategory !== req.body.setPermissivecategory) {
             if (req.body.fcategory === 'shoes') {
-                yield shoesproduct.deleteOne({ _id: new ObjectId(req.params.id) });
+                yield shoesproduct.deleteOne({ _id: new ObjectId(req.body.id) });
             }
             if (req.body.fcategory === 'pants') {
-                yield pantsproduct.deleteOne({ _id: new ObjectId(req.params.id) });
+                yield pantsproduct.deleteOne({ _id: new ObjectId(req.body.id) });
             }
             if (req.body.fcategory === 'Shirts') {
-                yield Shirtsproduct.deleteOne({ _id: new ObjectId(req.params.id) });
+                yield Shirtsproduct.deleteOne({ _id: new ObjectId(req.body.id) });
             }
             if (req.body.setPermissivecategory === 'Shirts') {
                 yield new Shirtsproduct(item).save();
-                res.status(200).json({
-                    message: "good",
-                    src: potos,
-                });
+                return res.status(200).json(item);
             }
             if (req.body.setPermissivecategory === 'shoes') {
                 yield new shoesproduct(item).save();
-                res.status(200).json({
-                    message: "good",
-                    src: potos,
-                });
+                return res.status(200).json(item);
             }
             if (req.body.setPermissivecategory === 'pants') {
                 yield new pantsproduct(item).save();
-                res.status(200).json({
-                    message: "good",
-                    src: potos,
-                });
+                return res.status(200).json(item);
             }
         }
     }

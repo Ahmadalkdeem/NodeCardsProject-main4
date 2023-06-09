@@ -7,9 +7,9 @@ import { validatenumber } from "../middleware/number/number.js";
 import { ObjectId } from "mongodb";
 const router = Router();
 
-router.get('/:accessToken/:skip', validateToken2, validatenumber, async (req, res) => {
+router.get('/', validateToken2, validatenumber, async (req, res) => {
     try {
-        let numberskip = Number(req.params.skip)
+        let numberskip = Number(req.query.skip)
         const user = await users.find({}, { username: 1, email: 1, roles: 1 }).limit(100).skip(numberskip);
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
@@ -19,22 +19,34 @@ router.get('/:accessToken/:skip', validateToken2, validatenumber, async (req, re
         return res.status(500).json({ message: "server error", error: e })
     }
 });
-router.delete('/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
+router.get('/getuser', validateToken2, validateMail, async (req, res) => {
     try {
-        const user = await users.deleteOne({ _id: new ObjectId(req.params.id) });
+        const user = await users.findOne({ email: req.query.email }, { username: 1, email: 1, roles: 1 });
+        if (!user) {
+            return res.status(401).json({ message: "No Such User" });
+        }
+
+        return res.status(200).json(user);
+    } catch (e) {
+        return res.status(500).json({ message: "server error", error: e })
+    }
+});
+router.delete('/', validateToken2, validateObjectid, async (req: any, res) => {
+    try {
+        const user = await users.deleteOne({ _id: new ObjectId(req.query.id) });
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
         }
 
 
-        return res.status(200).json({ Message: 'susces', id: req.params.id });
+        return res.status(200).json({ Message: 'susces', id: req.query.id });
     } catch (e) {
-        return res.status(500).json({ message: "server error", error: e })
+        return res.status(500).json({ message: req.query, error: e })
     }
 });
-router.put('/admin/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
+router.put('/admin', validateToken2, validateObjectid, async (req, res) => {
     try {
-        const id = req.params.id;
+        const id: any = req.body.params.id;
         const user = await users.updateOne({ _id: new ObjectId(id) }, { roles: ['admin'] });
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
@@ -46,9 +58,9 @@ router.put('/admin/:id/:accessToken', validateToken2, validateObjectid, async (r
         return res.status(500).json({ message: "server error", error: e })
     }
 });
-router.put('/user/:id/:accessToken', validateToken2, validateObjectid, async (req, res) => {
+router.put('/user', validateToken2, validateObjectid, async (req, res) => {
     try {
-        const id = req.params.id;
+        const id: any = req.body.params.id;
         const user = await users.updateOne({ _id: new ObjectId(id) }, { roles: ['user'] });
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
@@ -60,18 +72,5 @@ router.put('/user/:id/:accessToken', validateToken2, validateObjectid, async (re
         return res.status(500).json({ message: "server error", error: e })
     }
 });
-router.post('/getuser/:accessToken', validateToken2, validateMail, async (req, res) => {
-    try {
-        const user = await users.findOne({ email: req.body.email }, { username: 1, email: 1, roles: 1 });
-        if (!user) {
-            return res.status(401).json({ message: "No Such User" });
-        }
-
-        return res.status(200).json(user);
-    } catch (e) {
-        return res.status(500).json({ message: "server error", error: e })
-    }
-});
-
 
 export { router as userRouter };

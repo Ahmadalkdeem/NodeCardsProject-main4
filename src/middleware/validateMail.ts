@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import _ from "underscore";
 import { schemaMail } from "../validators/validateMail.js";
 const validateMail: RequestHandler = (req, res, next) => {
-    const body = _.pick(req.body, "email");
+    const body = _.pick(req.query, "email");
 
     const { error } = schemaMail.validate(body);
 
