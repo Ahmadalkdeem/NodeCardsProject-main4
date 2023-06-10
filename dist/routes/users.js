@@ -194,32 +194,54 @@ router.post('/Restartpassword', validateMail, (req, res) => __awaiter(void 0, vo
         const token = jwt.sign({ email: user.email, randomnumber: req.body.password }, authConfig.secret, {
             expiresIn: '1h'
         });
-        let accessToken = yield oAuth2Client.getAccessToken();
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                type: 'OAuth2',
                 user: 'ahmadalkdeem@gmail.com',
-                clientId: authConfig.clientId,
-                clientSecret: authConfig.clientSecret,
-                refreshToken: authConfig.refrech_token,
-                accessToken: accessToken.token
+                pass: authConfig.pasword
             }
         });
         const message = {
             from: 'ahmadalkdeem@gmail.com',
-            to: req.body.email,
+            to: body.email,
             subject: 'Subject of the email',
             text: `http://localhost:3000/pasword/token/${token}`
         };
         yield transporter.sendMail(message, function (error, info) {
             if (error) {
-                return res.status(400).json({ error: error, ahmad: 'ahmad' });
+                res.status(400).json({ error: error, ahmad: 'ahmad' });
             }
             else {
-                return res.status(200).json({ good: 'good', number: formattedNumber });
+                res.status(200).json({ good: 'good' });
+                console.log('Email sent: ');
             }
         });
+        return res.status(200).json({ good: 'good', number: formattedNumber });
+        // let accessToken = await oAuth2Client.getAccessToken()
+        // const transporter = nodemailer.createTransport({
+        //   service: 'gmail',
+        //   auth: {
+        //     type: 'OAuth2',
+        //     user: 'ahmadalkdeem@gmail.com',
+        //     clientId: authConfig.clientId,
+        //     clientSecret: authConfig.clientSecret,
+        //     refreshToken: authConfig.refrech_token,
+        //     accessToken: accessToken.token
+        //   }
+        // });
+        // const message = {
+        //   from: 'ahmadalkdeem@gmail.com',
+        //   to: req.body.email,
+        //   subject: 'Subject of the email',
+        //   text: `http://localhost:3000/pasword/token/${token}`
+        // };
+        // await transporter.sendMail(message, function (error, info) {
+        //   if (error) {
+        //     return res.status(400).json({ error: error, ahmad: 'ahmad' })
+        //   } else {
+        //     return res.status(200).json({ good: 'good', number: formattedNumber })
+        //   }
+        // });
     }
     catch (e) {
         return res.status(500).json({ message: "server error", email: req.body.email, error: e });

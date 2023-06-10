@@ -1,7 +1,7 @@
 import _ from "underscore";
 import { schemaMail } from "../validators/validateMail.js";
 const validateMail = (req, res, next) => {
-    const body = _.pick(req.query, "email");
+    const body = _.pick(req.body, "email");
     const { error } = schemaMail.validate(body);
     if (error) {
         return res.status(400).json({

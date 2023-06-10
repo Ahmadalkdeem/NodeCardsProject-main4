@@ -3,8 +3,12 @@ const router = Router();
 import nodemailer from 'nodemailer'
 import authConfig from "../db/config/auth.config.js";
 import { google } from "googleapis";
-let oAuth2Client = new google.auth.OAuth2(authConfig.clientId, authConfig.clientSecret, authConfig.regected_url)
-oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token })
+const oAuth2Client = new google.auth.OAuth2(
+    authConfig.clientId,
+    authConfig.clientSecret,
+    authConfig.regected_url
+);
+oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token });
 
 router.get('/ahmad', async (req: any, res) => {
     try {
