@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import _ from "underscore";
-import { cardSchema2 } from "../validators/cards.js";
+import { cardUpdateSchema } from "../validators/cards.js";
 import fs from "fs";
 const validateCard: RequestHandler = (req: any, res, next) => {
     const body = _.pick(req.body, "titel", "brand", "setPermissivecategory", 'categoryselect2', 'description', 'saleprice', 'regularprice', 'fSizeOptions2', 'photos', 'photodelte', 'fcategory', 'id');
@@ -18,7 +18,7 @@ const validateCard: RequestHandler = (req: any, res, next) => {
             photo: 'uplode photo'
         });
     }
-    const { error } = cardSchema2.validate(body);
+    const { error } = cardUpdateSchema.validate(body);
 
     if (error) {
         for (let a = 0; a < req.files.length; a++) {

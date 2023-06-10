@@ -30,4 +30,4 @@ const schema3 = joi.object({
     sizeselect: joi.string().regex(size).required(),
     quantity: joi.number().min(1).max(10).required()
 });
-export { schema as cardSchema, schema2 as cardSchema2, schema3 as cardSchema3 };
+export { schema as cardSchema, schema2 as cardUpdateSchema, schema3 as orderSchema };

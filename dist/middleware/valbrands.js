@@ -12,4 +12,4 @@ const valbrands = (req, res, next) => {
     }
     next();
 };
-export { valbrands };
+// export { valbrands };

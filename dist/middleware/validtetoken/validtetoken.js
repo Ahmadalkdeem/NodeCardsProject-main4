@@ -3,7 +3,7 @@ import authConfig from "../../db/config/auth.config.js";
 const validateToken = (req, res, next) => {
     const token = req.body.params.accessToken;
     if (!token) {
-        return res.status(403).json({ message: "No Token Provided", token: 'req.body.token' });
+        return res.status(403).json({ message: "No Token Provided", token: req.body });
     }
     jwt.verify(token, authConfig.secret, (err, payload) => {
         if (err) {

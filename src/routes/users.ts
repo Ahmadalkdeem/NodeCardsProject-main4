@@ -6,7 +6,6 @@ import { users } from "../db/models/user.js";
 import { validateSignUp } from "../middleware/verifySignupBody.js";
 import { userAlreadyExists } from "../middleware/userAlreadyExists.js";
 import { validateToken } from "../middleware/validtetoken/validtetoken.js";
-import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import bcrypt from "bcryptjs";
 import { validateSignIn } from "../middleware/verifySignInBody.js";
 import { validateMail } from "../middleware/validateMail.js";
@@ -15,8 +14,76 @@ import nodemailer from 'nodemailer'
 import { valpassword } from "../middleware/valpassword.js";
 import { google } from "googleapis";
 import { validateToken3 } from "../middleware/validtetoken/validateToken3.js";
+import { favorites } from "../db/models/favorites.js";
 let oAuth2Client = new google.auth.OAuth2(authConfig.clientId, authConfig.clientSecret, authConfig.regected_url)
 oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token })
+
+
+let pipeline = [
+  {
+    $project: {
+      src: 1,
+      _id: 1,
+      brand: 1,
+      category: 1,
+      name: 1,
+    }
+  }
+]
+export let aggregte = [
+  { $unwind: '$arr' },
+  {
+    $lookup: {
+      from: 'shoesproducts',
+      localField: 'arr',
+      foreignField: '_id',
+      as: 'shoesproducts'
+    }
+  },
+  {
+    $lookup: {
+      from: 'shirtsproducts',
+      localField: 'arr',
+      foreignField: '_id',
+      as: 'shirtsproducts'
+    }
+  },
+  {
+    $lookup: {
+      from: 'pantsproducts',
+      localField: 'arr',
+      foreignField: '_id',
+      as: 'pantsproducts'
+    }
+  },
+  {
+    $group: {
+      _id: '$Email',
+      products: {
+        $push: {
+          $concatArrays: ['$shoesproducts', '$shirtsproducts', '$pantsproducts']
+        }
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      Email: '$_id',
+      products: {
+        $reduce: {
+          input: '$products',
+          initialValue: [],
+          in: { $setUnion: ['$$value', '$$this'] }
+        }
+      }
+    }
+  }
+]
+
+
+
+
 
 const router = Router();
 router.post("/signin", validateSignIn, async (req, res) => {
@@ -37,13 +104,17 @@ router.post("/signin", validateSignIn, async (req, res) => {
     const token = jwt.sign({ email: user.email, password: req.body.password }, authConfig.secret, {
       expiresIn: '1d'
     })
+    const favorite = await favorites.aggregate([
+      { $match: { Email: req.body.email } }
+      , ...aggregte]);
     return res.status(200).json(
       {
         id: user._id,
         username: user.username,
         email: user.email,
         roles: user.roles,
-        accessToken: token
+        accessToken: token,
+        favorite: favorite
       }
     );
   } catch (e) {
@@ -53,7 +124,6 @@ router.post("/signin", validateSignIn, async (req, res) => {
 
 router.post("/valtoken", validateToken, async (req: any, res) => {
   try {
-
     const user = await users.findOne({ email: req.email });
     const isPasswordValid = await bcrypt.compare(
       req.password,
@@ -61,10 +131,13 @@ router.post("/valtoken", validateToken, async (req: any, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid Credentials" });
     }
+    const favorite = await favorites.aggregate([
+      { $match: { Email: req.email } }
+      , ...aggregte]);
     const token = jwt.sign({ email: req.email, password: req.password }, authConfig.secret, {
       expiresIn: '1d'
     })
-    return res.json({ accessToken: token, username: user.username, email: user.email, roles: user.roles, id: user._id });
+    return res.json({ accessToken: token, username: user.username, email: user.email, roles: user.roles, id: user._id, favorite: favorite });
 
   } catch (e) {
     return res.status(500).json({ message: "Server DB Error", email: `aa  ${req.email}`, password: req.password, error: e });
@@ -79,9 +152,11 @@ router.post("/signup", validateSignUp, userAlreadyExists, async (req, res) => {
   })
   body.password = await bcrypt.hash(body.password, 12);
   const user = new users(body);
+  const favorite = new favorites({ Email: body.email, arr: [] });
   try {
     user.roles = ['user'];
     await user.save();
+    await favorite.save();
     return res.json({ message: "user saved", id: { accessToken: token, username: user.username, email: user.email, roles: user.roles, id: user._id } });
   } catch (e) {
     return res.status(500).json({ message: "Server DB Error", error: e });

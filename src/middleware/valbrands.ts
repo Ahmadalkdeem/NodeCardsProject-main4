@@ -17,4 +17,4 @@ const valbrands: RequestHandler = (req, res, next) => {
     next();
 };
 
-export { valbrands };
+// export { valbrands };
