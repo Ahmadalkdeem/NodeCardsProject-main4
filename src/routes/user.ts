@@ -10,7 +10,7 @@ const router = Router();
 router.get('/', validateToken2, validatenumber, async (req, res) => {
     try {
         let numberskip = Number(req.query.skip)
-        const user = await users.find({}, { username: 1, email: 1, roles: 1 }).limit(100).skip(numberskip);
+        const user = await users.find({}, { username: 1, email: 1, roles: 1 }).limit(150).skip(numberskip);
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
         }

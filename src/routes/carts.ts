@@ -126,7 +126,7 @@ router.get('/getorders', validateToken2, validatenumber, async (req: any, res) =
         Carts.aggregate([
             { $match: { status: false } },
             { $skip: skip },
-            { $limit: 300 },
+            { $limit: 150 },
             ...aggregte,
             { $sort: { _id: 1 } }
         ]).then((result) => {
@@ -142,7 +142,7 @@ router.get('/getorders', validateToken2, validatenumber, async (req: any, res) =
 
 router.put('/putoneorder', validateToken2, validateObjectid, async (req: any, res) => {
     try {
-        let order = Carts.updateOne({ _id: new ObjectId(req.body.params.id) }, { $set: { status: true } }).then((e) => {
+        Carts.updateOne({ _id: new ObjectId(req.body.params.id) }, { $set: { status: true } }).then((e) => {
             res.json({ good: 'good', id: req.body.params.id })
         })
     } catch (e) {

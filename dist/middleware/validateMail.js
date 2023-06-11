@@ -1,12 +1,10 @@
-import _ from "underscore";
 import { schemaMail } from "../validators/validateMail.js";
 const validateMail = (req, res, next) => {
-    const body = _.pick(req.body, "email");
-    const { error } = schemaMail.validate(body);
+    var _a;
+    const { error } = schemaMail.validate({ email: (_a = req.query.email) !== null && _a !== void 0 ? _a : req.body.email });
     if (error) {
         return res.status(400).json({
             message: "Validation Failed",
-            body: body,
             errors: error.details.map((ed) => ed.message),
         });
     }
