@@ -250,8 +250,9 @@ router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0,
                             then: "$$REMOVE",
                             else: {
                                 $arrayToObject: {
-                                    $objectToArray: {
-                                        $arrayElemAt: ["$pantsproducts", 0]
+                                    $filter: {
+                                        input: { $objectToArray: { $arrayElemAt: ["$pantsproducts", 0] } },
+                                        cond: { $ne: ["$$this.v", null] }
                                     }
                                 }
                             }
@@ -263,8 +264,9 @@ router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0,
                             then: "$$REMOVE",
                             else: {
                                 $arrayToObject: {
-                                    $objectToArray: {
-                                        $arrayElemAt: ["$shirtsproducts", 0]
+                                    $filter: {
+                                        input: { $objectToArray: { $arrayElemAt: ["$shirtsproducts", 0] } },
+                                        cond: { $ne: ["$$this.v", null] }
                                     }
                                 }
                             }
@@ -276,8 +278,9 @@ router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0,
                             then: "$$REMOVE",
                             else: {
                                 $arrayToObject: {
-                                    $objectToArray: {
-                                        $arrayElemAt: ["$shoesproducts", 0]
+                                    $filter: {
+                                        input: { $objectToArray: { $arrayElemAt: ["$shoesproducts", 0] } },
+                                        cond: { $ne: ["$$this.v", null] }
                                     }
                                 }
                             }
@@ -303,7 +306,13 @@ router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0,
             {
                 $project: {
                     _id: 0,
-                    products: 1
+                    products: {
+                        $filter: {
+                            input: "$products",
+                            as: "product",
+                            cond: { $ne: ["$$product", {}] }
+                        }
+                    }
                 }
             }
         ]).then(result => {
