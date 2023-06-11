@@ -14,6 +14,7 @@ import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validatedate } from "../middleware/date.js";
 import { validatenumber2 } from "../middleware/number/number2.js";
 import { favorites } from "../db/models/favorites.js";
+import { validatefind } from "../middleware/find/validatefind.js";
 router.get('/detales', validateToken2, validatenumber2, validatedate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let sort = Number(req.query.sort);
@@ -204,8 +205,58 @@ router.get('/getorders/count', validateToken2, validatedate, (req, res) => __awa
         });
     }
 }));
-router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/favorites', validateToken2, validatefind, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        let arr = [];
+        if (req.query.sizes !== undefined) {
+            const sizes = [];
+            req.query.sizes.forEach((e) => {
+                sizes.push({ 'stock.size': e });
+            });
+            if (sizes.length !== 0) {
+                arr.push({ $or: sizes });
+            }
+        }
+        if (req.query.categorys !== undefined) {
+            const categorys = [];
+            req.query.categorys.forEach((e) => {
+                categorys.push({ category: e });
+            });
+            if (categorys.length !== 0) {
+                arr.push({ $or: categorys });
+            }
+        }
+        if (req.query.categorys2 !== undefined) {
+            const categorys2 = [];
+            req.query.categorys2.forEach((e) => {
+                categorys2.push({ category2: e });
+            });
+            if (categorys2.length !== 0) {
+                arr.push({ $or: categorys2 });
+            }
+        }
+        if (req.query.colors !== undefined) {
+            const colors = [];
+            req.query.colors.forEach((e) => {
+                colors.push({ category: e });
+            });
+            if (colors.length !== 0) {
+                arr.push({ $or: colors });
+            }
+        }
+        if (req.query.brands !== undefined) {
+            const brands = [];
+            req.query.brands.forEach((e) => {
+                brands.push({ brand: e });
+            });
+            if (brands.length !== 0) {
+                arr.push({ $or: brands });
+            }
+        }
+        let match = {};
+        if (arr.length !== 0) {
+            match = { $match: { $and: arr } };
+        }
         yield favorites.aggregate([
             {
                 $unwind: "$arr"
@@ -221,7 +272,8 @@ router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0,
                     from: "pantsproducts",
                     localField: "_id",
                     foreignField: "_id",
-                    as: "pantsproducts"
+                    as: "pantsproducts",
+                    pipeline: arr.length !== 0 ? [match] : []
                 }
             },
             {
@@ -229,7 +281,8 @@ router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0,
                     from: "shirtsproducts",
                     localField: "_id",
                     foreignField: "_id",
-                    as: "shirtsproducts"
+                    as: "shirtsproducts",
+                    pipeline: arr.length !== 0 ? [match] : []
                 }
             },
             {
@@ -237,7 +290,8 @@ router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0,
                     from: "shoesproducts",
                     localField: "_id",
                     foreignField: "_id",
-                    as: "shoesproducts"
+                    as: "shoesproducts",
+                    pipeline: arr.length !== 0 ? [match] : []
                 }
             },
             {

@@ -9,9 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const Finddate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let item = {
-            price: [20, 200]
-        };
         const sizes = [];
         if (req.query.sizes !== undefined) {
             req.query.sizes.forEach((e) => {
@@ -54,7 +51,6 @@ const Finddate = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                     ]
                 },
             ],
-            // price: { $gt: item.price[0], $lt: item.price[1] }
         };
         req.find = x;
         next();

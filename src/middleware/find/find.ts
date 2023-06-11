@@ -1,9 +1,6 @@
 import { RequestHandler } from "express";
 const Finddate: RequestHandler = async (req: any, res, next) => {
     try {
-        let item = {
-            price: [20, 200]
-        }
         const sizes = [];
         if (req.query.sizes !== undefined) {
             req.query.sizes.forEach((e) => {
@@ -48,7 +45,6 @@ const Finddate: RequestHandler = async (req: any, res, next) => {
                     ]
                 },
             ],
-            // price: { $gt: item.price[0], $lt: item.price[1] }
         };
         req.find = x
         next()
