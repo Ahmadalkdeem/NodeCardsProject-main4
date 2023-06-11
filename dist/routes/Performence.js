@@ -13,7 +13,6 @@ import { Carts } from "../db/models/cart.js";
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validatedate } from "../middleware/date.js";
 import { validatenumber2 } from "../middleware/number/number2.js";
-// import { aggregte } from "./users.js";
 import { favorites } from "../db/models/favorites.js";
 router.get('/detales', validateToken2, validatenumber2, validatedate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -205,110 +204,109 @@ router.get('/getorders/count', validateToken2, validatedate, (req, res) => __awa
         });
     }
 }));
-export let aggregte = [
-    {
-        $unwind: "$arr"
-    },
-    {
-        $group: {
-            _id: "$arr",
-            count: { $sum: 1 }
-        }
-    },
-    {
-        $lookup: {
-            from: "pantsproducts",
-            localField: "_id",
-            foreignField: "_id",
-            as: "pantsproducts"
-        }
-    },
-    {
-        $lookup: {
-            from: "shirtsproducts",
-            localField: "_id",
-            foreignField: "_id",
-            as: "shirtsproducts"
-        }
-    },
-    {
-        $lookup: {
-            from: "shoesproducts",
-            localField: "_id",
-            foreignField: "_id",
-            as: "shoesproducts"
-        }
-    },
-    {
-        $project: {
-            _id: 0,
-            count: 1,
-            pants_product: {
-                $cond: {
-                    if: { $eq: [{ $ifNull: [{ $arrayElemAt: ["$pantsproducts", 0] }, null] }, null] },
-                    then: "$$REMOVE",
-                    else: {
-                        $arrayToObject: {
-                            $objectToArray: {
-                                $arrayElemAt: ["$pantsproducts", 0]
-                            }
-                        }
-                    }
-                }
-            },
-            shirts_product: {
-                $cond: {
-                    if: { $eq: [{ $ifNull: [{ $arrayElemAt: ["$shirtsproducts", 0] }, null] }, null] },
-                    then: "$$REMOVE",
-                    else: {
-                        $arrayToObject: {
-                            $objectToArray: {
-                                $arrayElemAt: ["$shirtsproducts", 0]
-                            }
-                        }
-                    }
-                }
-            },
-            shoes_product: {
-                $cond: {
-                    if: { $eq: [{ $ifNull: [{ $arrayElemAt: ["$shoesproducts", 0] }, null] }, null] },
-                    then: "$$REMOVE",
-                    else: {
-                        $arrayToObject: {
-                            $objectToArray: {
-                                $arrayElemAt: ["$shoesproducts", 0]
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    {
-        $sort: {
-            count: -1
-        }
-    },
-    {
-        $group: {
-            _id: null,
-            products: {
-                $push: {
-                    $mergeObjects: ["$pants_product", "$shirts_product", "$shoes_product"]
-                }
-            }
-        }
-    },
-    {
-        $project: {
-            _id: 0,
-            products: 1
-        }
-    }
-];
 router.get('/favorites', validateToken2, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield favorites.aggregate(aggregte).then(result => {
+        yield favorites.aggregate([
+            {
+                $unwind: "$arr"
+            },
+            {
+                $group: {
+                    _id: "$arr",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $lookup: {
+                    from: "pantsproducts",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "pantsproducts"
+                }
+            },
+            {
+                $lookup: {
+                    from: "shirtsproducts",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "shirtsproducts"
+                }
+            },
+            {
+                $lookup: {
+                    from: "shoesproducts",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "shoesproducts"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    count: 1,
+                    pants_product: {
+                        $cond: {
+                            if: { $eq: [{ $ifNull: [{ $arrayElemAt: ["$pantsproducts", 0] }, null] }, null] },
+                            then: "$$REMOVE",
+                            else: {
+                                $arrayToObject: {
+                                    $objectToArray: {
+                                        $arrayElemAt: ["$pantsproducts", 0]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    shirts_product: {
+                        $cond: {
+                            if: { $eq: [{ $ifNull: [{ $arrayElemAt: ["$shirtsproducts", 0] }, null] }, null] },
+                            then: "$$REMOVE",
+                            else: {
+                                $arrayToObject: {
+                                    $objectToArray: {
+                                        $arrayElemAt: ["$shirtsproducts", 0]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    shoes_product: {
+                        $cond: {
+                            if: { $eq: [{ $ifNull: [{ $arrayElemAt: ["$shoesproducts", 0] }, null] }, null] },
+                            then: "$$REMOVE",
+                            else: {
+                                $arrayToObject: {
+                                    $objectToArray: {
+                                        $arrayElemAt: ["$shoesproducts", 0]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $sort: {
+                    count: -1
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    products: {
+                        $push: {
+                            $mergeObjects: ["$pants_product", "$shirts_product", "$shoes_product"]
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    products: 1
+                }
+            }
+        ]).then(result => {
             res.json(result);
         });
     }

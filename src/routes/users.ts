@@ -18,18 +18,6 @@ import { favorites } from "../db/models/favorites.js";
 let oAuth2Client = new google.auth.OAuth2(authConfig.clientId, authConfig.clientSecret, authConfig.regected_url)
 oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token })
 
-
-let pipeline = [
-  {
-    $project: {
-      src: 1,
-      _id: 1,
-      brand: 1,
-      category: 1,
-      name: 1,
-    }
-  }
-]
 export let aggregte = [
   { $unwind: '$arr' },
   {
@@ -81,10 +69,6 @@ export let aggregte = [
   }
 ]
 
-
-
-
-
 const router = Router();
 router.post("/signin", validateSignIn, async (req, res) => {
   try {
@@ -92,12 +76,10 @@ router.post("/signin", validateSignIn, async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "No Such User" });
     }
-
     const isPasswordValid = await bcrypt.compare(
       req.body.password,
       user.password
     );
-
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid Credentials" });
     }

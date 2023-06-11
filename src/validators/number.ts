@@ -8,5 +8,4 @@ const schema2 = joi.object({
     limet: joi.number().min(0).max(100).required(),
 });
 
-
 export { schema as numbersSchema, schema2 as numbersSchema2 };

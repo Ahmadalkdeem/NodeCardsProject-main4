@@ -14,6 +14,7 @@ import authConfig from "../db/config/auth.config.js";
 import { google } from "googleapis";
 const oAuth2Client = new google.auth.OAuth2(authConfig.clientId, authConfig.clientSecret, authConfig.regected_url);
 oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token });
+//testing
 router.get('/ahmad', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let accessToken = yield oAuth2Client.getAccessToken();

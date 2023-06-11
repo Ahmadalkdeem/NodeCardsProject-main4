@@ -5,7 +5,6 @@ import { validatenumber } from "../middleware/number/number.js";
 import { Finddate } from "../middleware/find/find.js";
 import { validatefind } from "../middleware/find/validatefind.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
-let project = { $project: { _id: 1, stock: 1, price2: 1, price: 1, category2: 1, category: 1, brand: 1, name: 1, description: 1, src: 1 } };
 router.get("/filtering/shoesproduct", validatenumber, validatefind, Finddate, (req, res) => {
     let numberskip = Number(req.params.skip);
     shoesproduct.find(req.find).limit(50).skip(numberskip)

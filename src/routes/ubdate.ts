@@ -5,7 +5,6 @@ import { pantsproduct, Shirtsproduct, shoesproduct } from "../db/models/product.
 import { upload } from "../middleware/uplodefile.js";
 import { validateToken4 } from "../middleware/validtetoken/validtetoken4.js";
 import { validateCard } from "../middleware/cardupdate.js";
-import { validateObjectid } from "../middleware/validateObjectid.js";
 import { ObjectId } from "mongodb";
 import fs from "fs";
 router.put('/:accessToken', validateToken4, upload, validateCard, async (req: any, res) => {

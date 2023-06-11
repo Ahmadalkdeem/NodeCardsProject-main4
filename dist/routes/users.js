@@ -26,17 +26,6 @@ import { validateToken3 } from "../middleware/validtetoken/validateToken3.js";
 import { favorites } from "../db/models/favorites.js";
 let oAuth2Client = new google.auth.OAuth2(authConfig.clientId, authConfig.clientSecret, authConfig.regected_url);
 oAuth2Client.setCredentials({ refresh_token: authConfig.refrech_token });
-let pipeline = [
-    {
-        $project: {
-            src: 1,
-            _id: 1,
-            brand: 1,
-            category: 1,
-            name: 1,
-        }
-    }
-];
 export let aggregte = [
     { $unwind: '$arr' },
     {
