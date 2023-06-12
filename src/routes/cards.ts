@@ -105,7 +105,7 @@ router.get("/brands/filtering", validatenumber, validatefind, Finddate, (req: an
     if (req.query.colors !== undefined) {
         const colors = [];
         req.query.colors.forEach((e) => {
-            colors.push({ category: e });
+            colors.push({ 'stock.colors.color': e });
         });
         if (colors.length !== 0) {
             arr.push({ $or: colors });
