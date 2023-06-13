@@ -1,10 +1,35 @@
 import { RequestHandler } from "express";
 const Finddate: RequestHandler = async (req: any, res, next) => {
     try {
+
+        const pipeline = [];
+
+        if (req.query.sizes !== undefined && req.query.colors !== undefined) {
+            const sizesAndColors = [];
+            req.query.sizes.forEach((size) => {
+                const colorFilter = req.query.colors.map((color) => ({
+                    'stock': {
+                        $elemMatch: {
+                            size: size,
+                            'colors.color': color
+                        }
+                    }
+                }));
+                sizesAndColors.push({ $or: colorFilter });
+            });
+            pipeline.push({ $or: sizesAndColors });
+        }
+
         const sizes = [];
-        if (req.query.sizes !== undefined) {
+        if (req.query.sizes !== undefined && req.query.colors === undefined) {
             req.query.sizes.forEach((e) => {
                 sizes.push({ 'stock.size': e });
+            })
+        }
+        const colors = [];
+        if (req.query.colors !== undefined && req.query.sizes !== undefined) {
+            req.query.colors.forEach((e) => {
+                colors.push({ 'stock.colors.color': e });
             })
         }
         const categorys = [];
@@ -19,12 +44,7 @@ const Finddate: RequestHandler = async (req: any, res, next) => {
                 categorys2.push({ category2: e });
             })
         }
-        const colors = [];
-        if (req.query.colors !== undefined) {
-            req.query.colors.forEach((e) => {
-                colors.push({ 'stock.colors.color': e });
-            })
-        }
+
         const brands = [];
         if (req.query.brands !== undefined) {
             req.query.brands.forEach((e) => {
@@ -37,14 +57,15 @@ const Finddate: RequestHandler = async (req: any, res, next) => {
             $or: [
                 {
                     $and: [
+                        { $or: pipeline },
                         { $or: sizes },
                         { $or: brands },
+                        { $or: colors },
                         { $or: categorys },
                         { $or: categorys2 },
-                        { $or: colors }
                     ]
-                },
-            ],
+                }
+            ]
         };
         req.find = x
         next()

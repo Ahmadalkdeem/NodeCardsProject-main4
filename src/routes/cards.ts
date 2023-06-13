@@ -72,61 +72,56 @@ router.get("/brands", validatenumber, validatefind, (req: any, res) => {
 });
 router.get("/brands/filtering", validatenumber, validatefind, Finddate, (req: any, res) => {
     let numberskip = Number(req.query.skip)
-    let arr: any[] = [];
+    const pipeline = [];
 
-    if (req.query.sizes !== undefined) {
-        const sizes = [];
-        req.query.sizes.forEach((e) => {
-            sizes.push({ 'stock.size': e });
+    if (req.query.sizes !== undefined && req.query.colors !== undefined) {
+        const sizesAndColors = [];
+        req.query.sizes.forEach((size) => {
+            const colorFilter = req.query.colors.map((color) => ({
+                'stock': {
+                    $elemMatch: {
+                        size: size,
+                        'colors.color': color
+                    }
+                }
+            }));
+            sizesAndColors.push({ $or: colorFilter });
         });
-        if (sizes.length !== 0) {
-            arr.push({ $or: sizes });
-        }
+        pipeline.push({ $or: sizesAndColors });
+    } else if (req.query.sizes !== undefined && req.query.colors === undefined) {
+        const sizes = req.query.sizes.map((size) => ({
+            'stock.size': size
+        }));
+        pipeline.push({ $or: sizes });
+    } else if (req.query.colors !== undefined && req.query.sizes === undefined) {
+        const colors = req.query.colors.map((color) => ({
+            'stock.colors.color': color
+        }));
+        pipeline.push({ $or: colors });
     }
+
     if (req.query.categorys !== undefined) {
-        const categorys = [];
-        req.query.categorys.forEach((e) => {
-            categorys.push({ category: e });
-        });
-        if (categorys.length !== 0) {
-            arr.push({ $or: categorys });
-        }
-    }
-    if (req.query.categorys2 !== undefined) {
-        const categorys2 = [];
-        req.query.categorys2.forEach((e) => {
-            categorys2.push({ category2: e });
-        });
-        if (categorys2.length !== 0) {
-            arr.push({ $or: categorys2 });
-        }
+        const categorys = req.query.categorys.map((category) => ({
+            category: category
+        }));
+        pipeline.push({ $or: categorys });
     }
 
-    if (req.query.colors !== undefined) {
-        const colors = [];
-        req.query.colors.forEach((e) => {
-            colors.push({ 'stock.colors.color': e });
-        });
-        if (colors.length !== 0) {
-            arr.push({ $or: colors });
-        }
+    if (req.query.categorys2 !== undefined) {
+        const categorys2 = req.query.categorys2.map((category2) => ({
+            category2: category2
+        }));
+        pipeline.push({ $or: categorys2 });
     }
 
     if (req.query.brands !== undefined) {
-        const brands = [];
-        req.query.brands.forEach((e) => {
-            brands.push({ brand: e });
-        });
-        if (brands.length !== 0) {
-            arr.push({ $or: brands });
-        }
+        const brands = req.query.brands.map((brand) => ({
+            brand: brand
+        }));
+        pipeline.push({ $or: brands });
     }
 
-    let match: any = {};
-    if (arr.length !== 0) {
-        match = { $match: { $and: arr } };
-    }
-
+    const match = { $match: { $and: pipeline } };
     const query: any = [
         { $unionWith: { coll: "shirtsproducts" } },
         { $unionWith: { coll: "pantsproducts" } },
