@@ -8,7 +8,7 @@ import { validateObjectid } from "../middleware/validateObjectid.js";
 
 router.get("/filtering/shoesproduct", validatenumber, validatefind, Finddate, (req: any, res) => {
     let numberskip = Number(req.query.skip)
-    shoesproduct.find(req.find).limit(1).skip(numberskip)
+    shoesproduct.find(req.find).limit(150).skip(numberskip)
         .then((result) => {
             return res.json(result);
         })
@@ -16,7 +16,7 @@ router.get("/filtering/shoesproduct", validatenumber, validatefind, Finddate, (r
 });
 router.get("/filtering/Shirtsproduct", validatenumber, validatefind, Finddate, (req: any, res) => {
     let numberskip = Number(req.query.skip)
-    Shirtsproduct.find(req.find).limit(1).skip(numberskip)
+    Shirtsproduct.find(req.find).limit(150).skip(numberskip)
         .then((result) => {
             return res.json(result);
         })
@@ -24,7 +24,7 @@ router.get("/filtering/Shirtsproduct", validatenumber, validatefind, Finddate, (
 });
 router.get("/filtering/pantsproduct", validatenumber, validatefind, Finddate, (req: any, res) => {
     let numberskip = Number(req.query.skip)
-    pantsproduct.find(req.find).limit(1).skip(numberskip)
+    pantsproduct.find(req.find).limit(150).skip(numberskip)
         .then((result) => {
             return res.json(result);
         })
@@ -62,7 +62,7 @@ router.get("/brands", validatenumber, validatefind, (req: any, res) => {
         { $match: { brand: req.query.brands[0] } },
         { $sort: { _id: 1 } },
         { $skip: numberskip },
-        { $limit: 1 }
+        { $limit: 150 }
     ]).then((result) => {
         res.json(result);
 
@@ -128,7 +128,7 @@ router.get("/brands/filtering", validatenumber, validatefind, Finddate, (req: an
         match,
         { $sort: { _id: 1 } },
         { $skip: numberskip },
-        { $limit: 1 },
+        { $limit: 150 },
     ];
 
     shoesproduct.aggregate(query).then((result) => {
