@@ -7,24 +7,24 @@ import { validatefind } from "../middleware/find/validatefind.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
 
 router.get("/filtering/shoesproduct", validatenumber, validatefind, Finddate, (req: any, res) => {
-    let numberskip = Number(req.params.skip)
-    shoesproduct.find(req.find).limit(150).skip(numberskip)
+    let numberskip = Number(req.query.skip)
+    shoesproduct.find(req.find).limit(1).skip(numberskip)
         .then((result) => {
             return res.json(result);
         })
         .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
 });
 router.get("/filtering/Shirtsproduct", validatenumber, validatefind, Finddate, (req: any, res) => {
-    let numberskip = Number(req.params.skip)
-    Shirtsproduct.find(req.find).limit(150).skip(numberskip)
+    let numberskip = Number(req.query.skip)
+    Shirtsproduct.find(req.find).limit(1).skip(numberskip)
         .then((result) => {
             return res.json(result);
         })
         .catch((e) => res.status(500).json({ message: `Error: ${e}` }));
 });
 router.get("/filtering/pantsproduct", validatenumber, validatefind, Finddate, (req: any, res) => {
-    let numberskip = Number(req.params.skip)
-    pantsproduct.find(req.find).limit(150).skip(numberskip)
+    let numberskip = Number(req.query.skip)
+    pantsproduct.find(req.find).limit(1).skip(numberskip)
         .then((result) => {
             return res.json(result);
         })
@@ -62,7 +62,7 @@ router.get("/brands", validatenumber, validatefind, (req: any, res) => {
         { $match: { brand: req.query.brands[0] } },
         { $sort: { _id: 1 } },
         { $skip: numberskip },
-        { $limit: 150 }
+        { $limit: 1 }
     ]).then((result) => {
         res.json(result);
 
@@ -128,7 +128,7 @@ router.get("/brands/filtering", validatenumber, validatefind, Finddate, (req: an
         match,
         { $sort: { _id: 1 } },
         { $skip: numberskip },
-        { $limit: 150 },
+        { $limit: 1 },
     ];
 
     shoesproduct.aggregate(query).then((result) => {
