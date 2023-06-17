@@ -70,7 +70,7 @@ router.get("/brands", validatenumber, validatefind, (req: any, res) => {
 
 
 });
-router.get("/brands/filtering", validatenumber, validatefind, Finddate, (req: any, res) => {
+router.get("/brands/filtering", validatenumber, validatefind, (req: any, res) => {
     let numberskip = Number(req.query.skip)
     const pipeline = [];
 

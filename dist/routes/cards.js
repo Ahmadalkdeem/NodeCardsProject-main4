@@ -66,7 +66,7 @@ router.get("/brands", validatenumber, validatefind, (req, res) => {
         res.json(result);
     });
 });
-router.get("/brands/filtering", validatenumber, validatefind, Finddate, (req, res) => {
+router.get("/brands/filtering", validatenumber, validatefind, (req, res) => {
     let numberskip = Number(req.query.skip);
     const pipeline = [];
     if (req.query.sizes !== undefined && req.query.colors !== undefined) {
