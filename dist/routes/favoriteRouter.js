@@ -11,9 +11,9 @@ import { Router } from "express";
 const router = Router();
 import { ObjectId } from "mongodb";
 import { validateToken } from "../middleware/validtetoken/validtetoken.js";
-let project = { $project: { _id: 1, stock: 1, price2: 1, price: 1, category2: 1, category: 1, brand: 1, name: 1, description: 1, src: 1 } }; //validateToken
 import { favorites } from "../db/models/favorites.js";
-router.put("/", validateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+import { valfavorite } from "../middleware/valfavorite.js";
+router.put("/", validateToken, valfavorite, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let arr = JSON.parse(req.body.params.arr);
         let updatedArr = [];

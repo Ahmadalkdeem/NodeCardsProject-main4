@@ -1,7 +1,7 @@
 import joi from "joi";
 
 const schema = joi.object({
-    str: joi.number().min(0).required(),
+    skip: joi.number().min(0).required(),
 });
 const schema2 = joi.object({
     sort: joi.number().min(-1).max(1).required(),

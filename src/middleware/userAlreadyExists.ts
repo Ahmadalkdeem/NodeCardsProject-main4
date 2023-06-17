@@ -7,11 +7,6 @@ const userAlreadyExists: RequestHandler = async (req, res, next) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // found = await User.findOne({ username: req.body.username });
-    // if (found) {
-    //   return res.status(400).json({ message: "username already exists" });
-    // }
-
     next();
   } catch (e) {
     res.status(500).json({ message: e });

@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { numbersSchema } from "../../validators/number.js";
-const validatenumber = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const skip = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { error } = numbersSchema.validate({ str: req.query.skip });
+        const { error } = numbersSchema.validate({ skip: req.query.skip });
         if (error) {
             return res.status(400).json({
                 message: "Validation number",
@@ -21,4 +21,4 @@ const validatenumber = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     catch (_a) {
     }
 });
-export { validatenumber };
+export { skip };

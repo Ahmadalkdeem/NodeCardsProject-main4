@@ -12,10 +12,10 @@ import { users } from "../db/models/user.js";
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateMail } from "../middleware/validateMail.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
-import { validatenumber } from "../middleware/number/number.js";
+import { skip } from "../middleware/valNumber/skip.js";
 import { ObjectId } from "mongodb";
 const router = Router();
-router.get('/', validateToken2, validatenumber, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/', validateToken2, skip, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let numberskip = Number(req.query.skip);
         const user = yield users.find({}, { username: 1, email: 1, roles: 1 }).limit(150).skip(numberskip);

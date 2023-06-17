@@ -144,7 +144,6 @@ router.post("/signup", validateSignUp, userAlreadyExists, async (req, res) => {
     return res.status(500).json({ message: "Server DB Error", error: e });
   }
 });
-//ForgotPassword
 router.post('/ForgotPassword', ForgotPassword, async (req, res) => {
   try {
     const body = _.pick(req.body, "email", "password", 'password2');
@@ -247,7 +246,7 @@ router.post('/Restartpassword', validateMail, async (req, res) => {
     return res.status(500).json({ message: "server error", email: req.body.email, error: e })
   }
 });
-router.post('/Restartpassword2', valpassword, validateToken3, async (req: any, res) => {
+router.post('/Restartpassword2', validateToken3, valpassword, async (req: any, res) => {
   try {
     const body = _.pick(req.body, "token", 'password');
     body.password = await bcrypt.hash(body.password, 12);

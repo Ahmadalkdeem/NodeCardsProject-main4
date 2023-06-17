@@ -7,17 +7,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { users } from "../db/models/user.js";
-const userAlreadyExists = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+import { valfavorite as val } from "../validators/valfavorite.js";
+const valfavorite = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let found = yield users.findOne({ email: req.body.email });
-        if (found) {
-            return res.status(400).json({ message: "Email already exists" });
+        const { error } = val.validate({ arr: JSON.parse(req.body.params.arr) });
+        if (error) {
+            return res.status(400).json({
+                message: "Validation Failed",
+                errors: error.details.map((ed) => ed.message),
+            });
         }
         next();
     }
-    catch (e) {
-        res.status(500).json({ message: e });
+    catch (_a) {
     }
 });
-export { userAlreadyExists };
+export { valfavorite };

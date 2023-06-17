@@ -1,7 +1,6 @@
 import { RequestHandler } from "express";
 const Finddate: RequestHandler = async (req: any, res, next) => {
     try {
-
         const pipeline = [];
 
         if (req.query.sizes !== undefined && req.query.colors !== undefined) {

@@ -14,7 +14,7 @@ import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateorder } from "../middleware/order.js";
 import { neworder } from "../middleware/neworder.js";
 import nodemailer from 'nodemailer';
-import { validatenumber } from "../middleware/number/number.js";
+import { skip } from "../middleware/valNumber/skip.js";
 import authConfig from "../db/config/auth.config.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
 import { ObjectId } from "mongodb";
@@ -115,7 +115,7 @@ router.post('/neworder', validateorder, neworder, (req, res) => __awaiter(void 0
         });
     }
 }));
-router.get('/getorders', validateToken2, validatenumber, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/getorders', validateToken2, skip, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let skip = Number(req.query.skip);
         Carts.aggregate([

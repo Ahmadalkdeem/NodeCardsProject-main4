@@ -12,58 +12,13 @@ const router = Router();
 import { Carts } from "../db/models/cart.js";
 import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validatedate } from "../middleware/date.js";
-import { validatenumber2 } from "../middleware/number/number2.js";
+import { validatenumber2 } from "../middleware/valNumber/sortAndSkip.js";
 import { favorites } from "../db/models/favorites.js";
 import { validatefind } from "../middleware/find/validatefind.js";
-router.get('/detales', validateToken2, validatenumber2, validatedate, validatefind, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+import { Find2 } from "../middleware/find/find2.js";
+router.get('/detales', validateToken2, validatenumber2, validatedate, validatefind, Find2, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const pipeline = [];
-        if (req.query.sizes !== undefined && req.query.colors !== undefined) {
-            const sizesAndColors = [];
-            req.query.sizes.forEach((size) => {
-                const colorFilter = req.query.colors.map((color) => ({
-                    'stock': {
-                        $elemMatch: {
-                            size: size,
-                            'colors.color': color
-                        }
-                    }
-                }));
-                sizesAndColors.push({ $or: colorFilter });
-            });
-            pipeline.push({ $or: sizesAndColors });
-        }
-        else if (req.query.sizes !== undefined && req.query.colors === undefined) {
-            const sizes = req.query.sizes.map((size) => ({
-                'stock.size': size
-            }));
-            pipeline.push({ $or: sizes });
-        }
-        else if (req.query.colors !== undefined && req.query.sizes === undefined) {
-            const colors = req.query.colors.map((color) => ({
-                'stock.colors.color': color
-            }));
-            pipeline.push({ $or: colors });
-        }
-        if (req.query.categorys !== undefined) {
-            const categorys = req.query.categorys.map((category) => ({
-                category: category
-            }));
-            pipeline.push({ $or: categorys });
-        }
-        if (req.query.categorys2 !== undefined) {
-            const categorys2 = req.query.categorys2.map((category2) => ({
-                category2: category2
-            }));
-            pipeline.push({ $or: categorys2 });
-        }
-        if (req.query.brands !== undefined) {
-            const brands = req.query.brands.map((brand) => ({
-                brand: brand
-            }));
-            pipeline.push({ $or: brands });
-        }
-        const match = { $match: { $and: pipeline } };
+        const match = { $match: { $and: req.find } };
         let sort = Number(req.query.sort);
         let limet = Number(req.query.limet);
         Carts.aggregate([
@@ -99,7 +54,7 @@ router.get('/detales', validateToken2, validatenumber2, validatedate, validatefi
                     localField: "_id.id",
                     foreignField: "_id",
                     as: "pantsproducts",
-                    pipeline: pipeline.length !== 0 ? [match] : []
+                    pipeline: req.find.length !== 0 ? [match] : []
                 }
             },
             {
@@ -108,7 +63,7 @@ router.get('/detales', validateToken2, validatenumber2, validatedate, validatefi
                     localField: "_id.id",
                     foreignField: "_id",
                     as: "shirtsproducts",
-                    pipeline: pipeline.length !== 0 ? [match] : []
+                    pipeline: req.find.length !== 0 ? [match] : []
                 }
             },
             {
@@ -117,7 +72,7 @@ router.get('/detales', validateToken2, validatenumber2, validatedate, validatefi
                     localField: "_id.id",
                     foreignField: "_id",
                     as: "shoesproducts",
-                    pipeline: pipeline.length !== 0 ? [match] : []
+                    pipeline: req.find.length !== 0 ? [match] : []
                 }
             },
             {
@@ -221,55 +176,9 @@ router.get('/getorders/detales', validateToken2, validatedate, (req, res) => __a
         });
     }
 }));
-router.get('/favorites', validateToken2, validatefind, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/favorites', validateToken2, validatefind, Find2, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const pipeline = [];
-        if (req.query.sizes !== undefined && req.query.colors !== undefined) {
-            const sizesAndColors = [];
-            req.query.sizes.forEach((size) => {
-                const colorFilter = req.query.colors.map((color) => ({
-                    'stock': {
-                        $elemMatch: {
-                            size: size,
-                            'colors.color': color
-                        }
-                    }
-                }));
-                sizesAndColors.push({ $or: colorFilter });
-            });
-            pipeline.push({ $or: sizesAndColors });
-        }
-        else if (req.query.sizes !== undefined && req.query.colors === undefined) {
-            const sizes = req.query.sizes.map((size) => ({
-                'stock.size': size
-            }));
-            pipeline.push({ $or: sizes });
-        }
-        else if (req.query.colors !== undefined && req.query.sizes === undefined) {
-            const colors = req.query.colors.map((color) => ({
-                'stock.colors.color': color
-            }));
-            pipeline.push({ $or: colors });
-        }
-        if (req.query.categorys !== undefined) {
-            const categorys = req.query.categorys.map((category) => ({
-                category: category
-            }));
-            pipeline.push({ $or: categorys });
-        }
-        if (req.query.categorys2 !== undefined) {
-            const categorys2 = req.query.categorys2.map((category2) => ({
-                category2: category2
-            }));
-            pipeline.push({ $or: categorys2 });
-        }
-        if (req.query.brands !== undefined) {
-            const brands = req.query.brands.map((brand) => ({
-                brand: brand
-            }));
-            pipeline.push({ $or: brands });
-        }
-        const match = { $match: { $and: pipeline } };
+        const match = { $match: { $and: req.find } };
         yield favorites.aggregate([
             {
                 $unwind: "$arr"
@@ -286,7 +195,7 @@ router.get('/favorites', validateToken2, validatefind, (req, res) => __awaiter(v
                     localField: "_id",
                     foreignField: "_id",
                     as: "pantsproducts",
-                    pipeline: pipeline.length !== 0 ? [match] : []
+                    pipeline: req.find.length !== 0 ? [match] : []
                 }
             },
             {
@@ -295,7 +204,7 @@ router.get('/favorites', validateToken2, validatefind, (req, res) => __awaiter(v
                     localField: "_id",
                     foreignField: "_id",
                     as: "shirtsproducts",
-                    pipeline: pipeline.length !== 0 ? [match] : []
+                    pipeline: req.find.length !== 0 ? [match] : []
                 }
             },
             {
@@ -304,7 +213,7 @@ router.get('/favorites', validateToken2, validatefind, (req, res) => __awaiter(v
                     localField: "_id",
                     foreignField: "_id",
                     as: "shoesproducts",
-                    pipeline: pipeline.length !== 0 ? [match] : []
+                    pipeline: req.find.length !== 0 ? [match] : []
                 }
             },
             {

@@ -6,11 +6,12 @@ import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateorder } from "../middleware/order.js";
 import { neworder } from "../middleware/neworder.js";
 import nodemailer from 'nodemailer'
-import { validatenumber } from "../middleware/number/number.js";
+import { skip } from "../middleware/valNumber/skip.js";
 import authConfig from "../db/config/auth.config.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
 import { ObjectId } from "mongodb";
 import { schemaMail } from "../validators/validateMail.js";
+
 let pipeline = [
     {
         $project: {
@@ -120,7 +121,7 @@ router.post('/neworder', validateorder, neworder, async (req: any, res) => {
     }
 })
 
-router.get('/getorders', validateToken2, validatenumber, async (req: any, res) => {
+router.get('/getorders', validateToken2, skip, async (req: any, res) => {
     try {
         let skip = Number(req.query.skip)
         Carts.aggregate([
