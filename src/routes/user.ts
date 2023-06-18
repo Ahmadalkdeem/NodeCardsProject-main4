@@ -4,7 +4,7 @@ import { validateToken2 } from "../middleware/validtetoken/validtetoken2.js";
 import { validateMail } from "../middleware/validateMail.js";
 import { validateObjectid } from "../middleware/validateObjectid.js";
 import { skip } from "../middleware/valNumber/skip.js";
-
+import { favorites } from "../db/models/favorites.js";
 import { ObjectId } from "mongodb";
 const router = Router();
 
@@ -32,11 +32,14 @@ router.get('/getuser', validateToken2, validateMail, async (req, res) => {
         return res.status(500).json({ message: "server error", error: e })
     }
 });
-router.delete('/', validateToken2, validateObjectid, async (req: any, res) => {
+router.delete('/', validateToken2, validateMail, async (req: any, res) => {
     try {
-        const user = await users.deleteOne({ _id: new ObjectId(req.query.id) });
+        const user = await users.deleteOne({ email: req.query.email });
         if (!user) {
             return res.status(401).json({ message: "No Such User" });
+        }
+        const favorite = await favorites.deleteOne({ Email: req.query.email });
+        if (!favorite) {
         }
 
 
